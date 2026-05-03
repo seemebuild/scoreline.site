@@ -15,6 +15,15 @@ export type JobStorePrismaClient = {
         runAfter?: Date;
       };
     }) => Promise<Job>;
+    update: (args: {
+      where: { id: string };
+      data: {
+        status?: "pending" | "running" | "completed" | "failed";
+        lockedAt?: Date | null;
+        runAfter?: Date;
+        lastError?: string | null;
+      };
+    }) => Promise<Job>;
   };
   $queryRaw: <TRow>(query: Prisma.Sql) => Promise<TRow>;
 };
@@ -108,4 +117,50 @@ export async function claimDueJobs(
       RETURNING job.*;
     `,
   );
+}
+
+export async function markJobCompleted(
+  prisma: JobStorePrismaClient,
+  jobId: string,
+): Promise<Job> {
+  return prisma.job.update({
+    where: { id: jobId },
+    data: {
+      status: "completed",
+      lockedAt: null,
+      lastError: null,
+    },
+  });
+}
+
+export async function markJobForRetry(
+  prisma: JobStorePrismaClient,
+  jobId: string,
+  runAfter: Date,
+  errorMessage: string,
+): Promise<Job> {
+  return prisma.job.update({
+    where: { id: jobId },
+    data: {
+      status: "pending",
+      runAfter,
+      lockedAt: null,
+      lastError: errorMessage,
+    },
+  });
+}
+
+export async function markJobFailed(
+  prisma: JobStorePrismaClient,
+  jobId: string,
+  errorMessage: string,
+): Promise<Job> {
+  return prisma.job.update({
+    where: { id: jobId },
+    data: {
+      status: "failed",
+      lockedAt: null,
+      lastError: errorMessage,
+    },
+  });
 }
