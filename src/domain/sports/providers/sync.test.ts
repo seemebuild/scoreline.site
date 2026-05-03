@@ -9,6 +9,9 @@ describe("syncApiFootballSoccerData", () => {
     const eventUpsert = vi.fn().mockResolvedValue({ id: "event_1" });
     const providerMappingUpsert = vi.fn().mockResolvedValue({ id: "mapping_1" });
     const standingUpsert = vi.fn().mockResolvedValue({ id: "standing_1" });
+    const scoreUpsert = vi.fn().mockResolvedValue({ id: "score_1" });
+    const eventFindFirst = vi.fn().mockResolvedValue({ id: "event_1" });
+    const eventUpdate = vi.fn().mockResolvedValue({ id: "event_1" });
     const client = {
       getLeagues: vi.fn().mockImplementation(async () => {
           return {
@@ -56,6 +59,25 @@ describe("syncApiFootballSoccerData", () => {
             ],
           };
       }),
+      getResults: vi.fn().mockImplementation(async () => {
+          return {
+            response: [
+              {
+                league: { id: 39, season: 2025 },
+                fixtures: [
+                  {
+                    fixture: {
+                      id: 1001,
+                      date: "2026-05-03T15:00:00+00:00",
+                    },
+                    teams: { home: { id: 33 }, away: { id: 49 } },
+                    goals: { home: 2, away: 1 },
+                  },
+                ],
+              },
+            ],
+          };
+      }),
     };
     const persistenceStore = {
       sport: {
@@ -66,6 +88,8 @@ describe("syncApiFootballSoccerData", () => {
       },
       event: {
         upsert: eventUpsert,
+        findFirst: eventFindFirst,
+        update: eventUpdate,
       },
       providerMapping: {
         upsert: providerMappingUpsert,
@@ -75,6 +99,9 @@ describe("syncApiFootballSoccerData", () => {
       },
       standing: {
         upsert: standingUpsert,
+      },
+      score: {
+        upsert: scoreUpsert,
       },
     };
 
@@ -99,16 +126,37 @@ describe("syncApiFootballSoccerData", () => {
           upsert: standingUpsert,
         },
       },
+      resultsStore: {
+        sport: {
+          findUnique: vi.fn().mockResolvedValue({ id: "sport_1", slug: "soccer" }),
+        },
+        competition: {
+          findFirst: vi.fn().mockResolvedValue({ id: "competition_1" }),
+        },
+        season: {
+          findFirst: vi.fn().mockResolvedValue({ id: "season_1" }),
+        },
+        event: {
+          findFirst: eventFindFirst,
+          update: eventUpdate,
+        },
+        score: {
+          upsert: scoreUpsert,
+        },
+      },
     });
 
     expect(result.competitions).toHaveLength(1);
     expect(result.fixtures).toHaveLength(1);
     expect(result.standings).toHaveLength(1);
-    expect(result.snapshots).toHaveLength(3);
-    expect(create).toHaveBeenCalledTimes(3);
+    expect(result.results).toHaveLength(1);
+    expect(result.snapshots).toHaveLength(4);
+    expect(create).toHaveBeenCalledTimes(4);
     expect(competitionUpsert).toHaveBeenCalledTimes(1);
     expect(eventUpsert).toHaveBeenCalledTimes(1);
     expect(providerMappingUpsert).toHaveBeenCalledTimes(1);
     expect(standingUpsert).toHaveBeenCalledTimes(1);
+    expect(scoreUpsert).toHaveBeenCalledTimes(1);
+    expect(eventUpdate).toHaveBeenCalledTimes(1);
   });
 });
