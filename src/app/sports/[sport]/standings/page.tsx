@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { SiteShell } from "../../../components/site-shell";
 import { launchSports } from "../../../../domain/sports/public-catalog";
 import { buildSportPath } from "../../../../domain/sports/routing";
+import { buildPageMetadata } from "../../../../domain/seo/metadata";
 
 type SportPageParams = {
   sport: string;
@@ -17,13 +18,11 @@ export function generateMetadata({ params }: { params: SportPageParams }): Metad
   const sport = launchSports.find((item: (typeof launchSports)[number]) => item.slug === params.sport);
   if (!sport) return {};
 
-  return {
+  return buildPageMetadata({
     title: `${sport.name} standings`,
     description: `League tables and standings for ${sport.name}.`,
-    alternates: {
-      canonical: `${buildSportPath(sport.slug)}/standings`,
-    },
-  };
+    canonicalPath: `${buildSportPath(sport.slug)}/standings`,
+  });
 }
 
 export default function SportStandingsPage({ params }: { params: SportPageParams }) {
