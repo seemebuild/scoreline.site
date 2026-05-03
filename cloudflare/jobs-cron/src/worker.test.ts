@@ -31,12 +31,12 @@ describe("Cloudflare cron worker", () => {
 
     await expect(
       worker.scheduled?.(
-        {} as ScheduledEvent,
+        {},
         {
           SCORELINE_BASE_URL: "https://scoreline.site",
           JOB_RUNNER_SECRET: "job-secret",
         },
-        {} as ExecutionContext,
+        {},
       ),
     ).rejects.toThrow("Tick request failed with status 401");
 
