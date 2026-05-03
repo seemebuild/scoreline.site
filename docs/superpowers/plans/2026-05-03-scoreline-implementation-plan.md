@@ -238,7 +238,7 @@ Goal: ship crawlable score surfaces backed by normalized data.
 
 ## Milestone 5: Sanity Editorial System
 
-Status: in progress.
+Status: complete.
 
 Goal: make editorial publishing the primary SEO workflow.
 
@@ -256,7 +256,7 @@ Goal: make editorial publishing the primary SEO workflow.
   - manual trend boosts
   - image metadata
 - Add Sanity client and typed content queries.
-- First slice: public trust pages and editorial shell routes that Sanity will later feed.
+- Public trust pages and editorial shell routes are in place.
 - Build article index/listing pages.
 - Build article detail pages.
 - Build author pages.
