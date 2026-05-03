@@ -1,4 +1,5 @@
 import { createApiFootballClient } from "./client";
+import { getProviderCapabilities } from "./capabilities";
 import {
   createAmericanFootballProviderShell,
   createBaseballProviderShell,
@@ -14,6 +15,7 @@ export type ProviderAdapter =
       kind: "api-football";
       sportSlug: "soccer";
       client: ReturnType<typeof createApiFootballClient>;
+      capabilities: ReturnType<typeof getProviderCapabilities>;
     }
   | {
       kind: "shell";
@@ -26,6 +28,7 @@ export type ProviderAdapter =
         | typeof createTennisProviderShell
         | typeof createGolfProviderShell
       >;
+      capabilities: ReturnType<typeof getProviderCapabilities>;
     };
 
 export function isSupportedProviderSport(value: string): value is ProviderSportType {
@@ -45,6 +48,7 @@ export function getProviderAdapter(sportSlug: string): ProviderAdapter {
         apiKey: "placeholder",
         baseUrl: "https://v3.football.api-sports.io",
       }),
+      capabilities: getProviderCapabilities(sportSlug),
     };
   }
 
@@ -52,6 +56,7 @@ export function getProviderAdapter(sportSlug: string): ProviderAdapter {
     kind: "shell",
     sportSlug,
     adapter: getShellAdapter(sportSlug),
+    capabilities: getProviderCapabilities(sportSlug),
   };
 }
 
