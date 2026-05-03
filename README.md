@@ -41,11 +41,7 @@ pnpm exec playwright install chromium
 ## Database
 
 Prisma 7 reads the connection URL from `prisma.config.ts`. Set
-`DATABASE_URL` in `.env.local` or use the documented local default:
-
-```bash
-postgresql://postgres:postgres@localhost:5432/scoreline
-```
+`DATABASE_URL` in `.env.local` to a Neon Postgres connection string.
 
 Generate the Prisma client:
 
@@ -53,7 +49,7 @@ Generate the Prisma client:
 pnpm db:generate
 ```
 
-Create and apply a local migration:
+Create and apply a migration:
 
 ```bash
 pnpm exec prisma migrate dev --name init
@@ -77,7 +73,7 @@ Verify migrations, seed, and constraint checks against a live database:
 pnpm db:verify
 ```
 
-This command requires a reachable Postgres database at the configured
+This command requires a reachable Neon database at the configured
 `DATABASE_URL`.
 
 ## Milestone 0
