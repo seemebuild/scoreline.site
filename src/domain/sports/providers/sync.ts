@@ -1,5 +1,5 @@
 import { buildApiFootballSnapshot, mapApiFootballFixture, mapApiFootballLeague } from "./api-football";
-import { saveProviderSnapshot, type ProviderSnapshotStorePrismaClient } from "./store";
+import { persistApiFootballSoccerSync } from "./persist";
 import type { ProviderSnapshot } from "./types";
 
 type ApiFootballClient = {
@@ -11,7 +11,7 @@ type SyncApiFootballSoccerDataInput = {
 };
 
 type SyncApiFootballSoccerDataOptions = {
-  snapshotStore?: ProviderSnapshotStorePrismaClient;
+  persistenceStore?: Parameters<typeof persistApiFootballSoccerSync>[0];
 };
 
 type SyncApiFootballSoccerDataResult = {
@@ -47,10 +47,12 @@ export async function syncApiFootballSoccerData(
     buildApiFootballSnapshot(fixturesResponse, "fixtures", null, input.now),
   ];
 
-  if (options.snapshotStore) {
-    for (const snapshot of snapshots) {
-      await saveProviderSnapshot(options.snapshotStore, snapshot);
-    }
+  if (options.persistenceStore) {
+    await persistApiFootballSoccerSync(options.persistenceStore, {
+      competitions,
+      fixtures,
+      snapshots,
+    });
   }
 
   return {
