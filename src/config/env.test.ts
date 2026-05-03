@@ -9,6 +9,7 @@ describe("createEnv", () => {
       APP_BASE_URL: "http://localhost:3000",
       JOB_RUNNER_SECRET: "job-secret",
       ADMIN_SECRET: "admin-secret",
+      SANITY_WEBHOOK_SECRET: "webhook-secret",
     });
 
     expect(env.APP_BASE_URL).toBe("http://localhost:3000");
@@ -21,6 +22,7 @@ describe("createEnv", () => {
         DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/scoreline",
         APP_BASE_URL: "http://localhost:3000",
         JOB_RUNNER_SECRET: "job-secret",
+        SANITY_WEBHOOK_SECRET: "webhook-secret",
       }),
     ).toThrow("ADMIN_SECRET");
   });
