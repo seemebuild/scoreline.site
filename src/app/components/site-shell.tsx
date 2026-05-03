@@ -19,7 +19,7 @@ export function SiteShell({
             <Link href="/sports/soccer">Soccer</Link>
             <Link href="/scores">Scores</Link>
             <Link href="/fixtures">Fixtures</Link>
-            <Link href="/search">Search</Link>
+            <Link href="/results">Results</Link>
           </nav>
         </div>
       </header>

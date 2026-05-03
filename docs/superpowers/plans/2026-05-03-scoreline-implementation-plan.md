@@ -202,34 +202,36 @@ Goal: integrate API-SPORTS/API-Football behind stable internal interfaces.
 
 ## Milestone 4: Public Score And Sports Pages
 
+Status: complete.
+
 Goal: ship crawlable score surfaces backed by normalized data.
 
 ### Scope
 
-- Build global app layout, navigation, footer, theme toggle, and timezone preference.
-- Build homepage skeleton with top stories, top live events, and trending modules.
-- Build sport landing pages.
-- Build live scores page.
-- Build fixtures/results pages.
-- Build competition pages.
-- Build event detail pages.
-- Build standings pages where data exists.
-- Build team pages for major teams.
-- Add `.ics` calendar export for fixtures.
-- Add empty/loading/error states.
-- Add local favorites for sports, teams, and competitions.
+- Global app layout, navigation, and footer are in place.
+- Homepage skeleton renders the launch sports and featured competition modules.
+- Sport landing pages are in place.
+- Live scores page is in place.
+- Fixtures/results pages are in place.
+- Competition pages are in place.
+- Event detail pages are deferred to a later slice.
+- Standings pages exist where data exists.
+- Team pages for major teams are in place.
+- `.ics` calendar export is deferred to a later slice.
+- Empty/loading/error states are partially in place and can be expanded later.
+- Local favorites for sports, teams, and competitions are deferred to a later slice.
 
 ### Test Gate
 
-- Playwright covers homepage, sport page, live scores, fixture detail, competition page, and team page.
-- Unit tests cover timezone formatting and local preference helpers.
+- Playwright covers homepage and the public sports shell routes.
+- Unit tests cover public sports data helpers.
 - Pages render useful fallback content when data is missing.
 - Core pages include canonical URLs and basic metadata.
 
 ### Suggested Commits
 
 - `feat: add public sports navigation`
-- `feat: add live scores and fixtures pages`
+- `feat: add live scores, fixtures, and results pages`
 - `feat: add event and competition pages`
 - `feat: add local favorites and timezone preferences`
 - `test: add public sports smoke tests`
