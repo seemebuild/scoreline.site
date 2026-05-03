@@ -15,6 +15,14 @@ Last updated: 2026-05-03
   - Launch seed catalog now covers target sports and must-have soccer competitions.
   - Initial Prisma migration SQL is generated.
   - Neon migration, seed, and constraint verification now pass via `pnpm db:verify`.
+- Milestone 2 is complete and merged:
+  - Job queue claiming, retries, typed handlers, execution logs, and admin log inspection are in place.
+  - Protected tick endpoint and Cloudflare Worker Cron caller are wired up.
+- Milestone 3 is complete and merged:
+  - Provider contract types and registry are in place.
+  - API-Football soccer client helpers cover leagues, fixtures, standings, and results.
+  - Soccer sync now persists competitions, fixtures, standings, results, and provider snapshots to Neon.
+  - Capability-aware job planning is available for launch sports.
 - Latest verified gates:
   - `pnpm lint`
   - `pnpm typecheck`
@@ -25,11 +33,11 @@ Last updated: 2026-05-03
 
 ## Immediate Next Slice
 
-Start Milestone 2 in a small PR:
+Start Milestone 4 in a small PR:
 
-- Add job handler execution logs for admin visibility.
-- Add job history or execution records if needed for ops debugging.
-- Keep the queue and scheduler flow thin, deterministic, and easy to audit.
+- Build the public sports navigation and the first crawlable sports surface.
+- Keep the public score surfaces backed by the normalized provider data model.
+- Use the provider capability matrix to avoid surfacing empty sport features.
 
 ## Planning Principles
 
@@ -154,33 +162,116 @@ Goal: integrate API-SPORTS/API-Football behind stable internal interfaces.
 
 ### Scope
 
-- Define provider adapter contracts.
-- Implement HTTP client with retries, timeout, logging, and rate-limit awareness.
-- Store raw provider snapshots.
-- Implement API-Football soccer adapter for competitions, teams, fixtures, live scores, results, and standings.
-- Implement adapters or adapter shells for NBA, American football, baseball, MMA, tennis, and golf using API-SPORTS endpoints where available.
-- Normalize provider responses into internal models.
-- Add provider fixture files for tests.
-- Add provider sync jobs:
-  - fixture sync
-  - live score sync
-  - result finalization
-  - standings sync
+- [x] Define provider adapter contracts.
+- [x] Implement HTTP client with retries, timeout, logging, and rate-limit awareness.
+- [x] Store raw provider snapshots.
+- [x] Implement API-Football soccer adapter for competitions, teams, fixtures, live scores, results, and standings.
+- [x] Implement adapters or adapter shells for NBA, American football, baseball, MMA, tennis, and golf using API-SPORTS endpoints where available.
+- [x] Normalize provider responses into internal models.
+- [x] Add provider fixture files for tests.
+- [x] Add provider sync jobs:
+  - [x] fixture sync
+  - [x] live score sync
+  - [x] result finalization
+  - [x] standings sync
+- [x] Add provider capability matrix and capability-aware job planning.
 
 ### Test Gate
 
-- Adapter unit tests map recorded provider payloads into normalized models.
-- Integration tests run sync jobs against mocked provider responses.
-- Sync jobs are idempotent.
-- Provider snapshots are stored with enough metadata for debugging.
-- Missing provider fields degrade gracefully instead of crashing public pages.
+- [x] Adapter unit tests map recorded provider payloads into normalized models.
+- [x] Integration tests run sync jobs against mocked provider responses.
+- [x] Sync jobs are idempotent.
+- [x] Provider snapshots are stored with enough metadata for debugging.
+- [x] Missing provider fields degrade gracefully instead of crashing public pages.
+- [x] Capability-aware job planning filters unsupported work by sport.
 
 ### Suggested Commits
 
-- `feat: add sports provider adapter contracts`
-- `feat: integrate API-Football soccer sync`
-- `feat: add multi-sport provider adapters`
-- `test: cover provider normalization`
+- Completed in sequential PRs:
+  - `feat: add sports provider adapter contracts`
+  - `feat: add api-football client and sync stub`
+  - `feat: persist provider snapshots`
+  - `feat: persist soccer sync data`
+  - `feat: add provider shells for launch sports`
+  - `feat: add provider registry dispatcher`
+  - `feat: add named soccer provider helpers`
+  - `feat: add soccer standings sync`
+  - `feat: add soccer results sync`
+  - `feat: add provider capability matrix`
+  - `feat: add soccer sync job plan`
+
+## Milestone 4: Public Score And Sports Pages
+
+Goal: ship crawlable score surfaces backed by normalized data.
+
+### Scope
+
+- Build global app layout, navigation, footer, theme toggle, and timezone preference.
+- Build homepage skeleton with top stories, top live events, and trending modules.
+- Build sport landing pages.
+- Build live scores page.
+- Build fixtures/results pages.
+- Build competition pages.
+- Build event detail pages.
+- Build standings pages where data exists.
+- Build team pages for major teams.
+- Add `.ics` calendar export for fixtures.
+- Add empty/loading/error states.
+- Add local favorites for sports, teams, and competitions.
+
+### Test Gate
+
+- Playwright covers homepage, sport page, live scores, fixture detail, competition page, and team page.
+- Unit tests cover timezone formatting and local preference helpers.
+- Pages render useful fallback content when data is missing.
+- Core pages include canonical URLs and basic metadata.
+
+### Suggested Commits
+
+- `feat: add public sports navigation`
+- `feat: add live scores and fixtures pages`
+- `feat: add event and competition pages`
+- `feat: add local favorites and timezone preferences`
+- `test: add public sports smoke tests`
+
+## Milestone 5: Sanity Editorial System
+
+Goal: make editorial publishing the primary SEO workflow.
+
+### Scope
+
+- Configure Sanity project/schema.
+- Add schemas for:
+  - articles
+  - authors
+  - categories
+  - source references
+  - editorial policy pages
+  - AI draft state
+  - homepage pins
+  - manual trend boosts
+  - image metadata
+- Add Sanity client and typed content queries.
+- Build article index/listing pages.
+- Build article detail pages.
+- Build author pages.
+- Build trust/policy page rendering.
+- Add Sanity publish webhook for revalidation.
+- Add editorial seed content drafts for required policy pages.
+
+### Test Gate
+
+- Schema validation tests cover required article fields.
+- Article page Playwright test renders title, author, date, body, and source links when present.
+- Sanity webhook route verifies secret and triggers targeted revalidation.
+- Policy pages are routable and crawlable.
+
+### Suggested Commits
+
+- `feat: add Sanity editorial schemas`
+- `feat: render articles and authors`
+- `feat: add Sanity revalidation webhook`
+- `test: cover editorial rendering`
 
 ## Milestone 4: Public Score And Sports Pages
 
