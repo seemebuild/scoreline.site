@@ -8,6 +8,7 @@ describe("syncApiFootballSoccerData", () => {
     const competitionUpsert = vi.fn().mockResolvedValue({ id: "competition_1" });
     const eventUpsert = vi.fn().mockResolvedValue({ id: "event_1" });
     const providerMappingUpsert = vi.fn().mockResolvedValue({ id: "mapping_1" });
+    const standingUpsert = vi.fn().mockResolvedValue({ id: "standing_1" });
     const client = {
       getLeagues: vi.fn().mockImplementation(async () => {
           return {
@@ -36,6 +37,25 @@ describe("syncApiFootballSoccerData", () => {
             ],
           };
       }),
+      getStandings: vi.fn().mockImplementation(async () => {
+          return {
+            response: [
+              {
+                league: { id: 39, season: 2025 },
+                standings: [
+                  [
+                    {
+                      rank: 1,
+                      team: { id: 33 },
+                      points: 88,
+                      all: { played: 38, win: 28, draw: 4, lose: 6 },
+                    },
+                  ],
+                ],
+              },
+            ],
+          };
+      }),
     };
     const persistenceStore = {
       sport: {
@@ -53,20 +73,42 @@ describe("syncApiFootballSoccerData", () => {
       providerSnapshot: {
         create,
       },
+      standing: {
+        upsert: standingUpsert,
+      },
     };
 
     const result = await syncApiFootballSoccerData(client, {
       now: new Date("2026-05-03T10:00:00.000Z"),
     }, {
       persistenceStore,
+      standingsStore: {
+        sport: {
+          findUnique: vi.fn().mockResolvedValue({ id: "sport_1", slug: "soccer" }),
+        },
+        competition: {
+          findFirst: vi.fn().mockResolvedValue({ id: "competition_1" }),
+        },
+        season: {
+          findFirst: vi.fn().mockResolvedValue({ id: "season_1" }),
+        },
+        team: {
+          findFirst: vi.fn().mockResolvedValue({ id: "team_1" }),
+        },
+        standing: {
+          upsert: standingUpsert,
+        },
+      },
     });
 
     expect(result.competitions).toHaveLength(1);
     expect(result.fixtures).toHaveLength(1);
-    expect(result.snapshots).toHaveLength(2);
-    expect(create).toHaveBeenCalledTimes(2);
+    expect(result.standings).toHaveLength(1);
+    expect(result.snapshots).toHaveLength(3);
+    expect(create).toHaveBeenCalledTimes(3);
     expect(competitionUpsert).toHaveBeenCalledTimes(1);
     expect(eventUpsert).toHaveBeenCalledTimes(1);
     expect(providerMappingUpsert).toHaveBeenCalledTimes(1);
+    expect(standingUpsert).toHaveBeenCalledTimes(1);
   });
 });
