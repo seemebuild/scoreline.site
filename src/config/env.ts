@@ -5,6 +5,7 @@ const envSchema = z.object({
   APP_BASE_URL: z.url(),
   JOB_RUNNER_SECRET: z.string().min(1, "JOB_RUNNER_SECRET is required"),
   ADMIN_SECRET: z.string().min(1, "ADMIN_SECRET is required"),
+  SANITY_WEBHOOK_SECRET: z.string().min(1, "SANITY_WEBHOOK_SECRET is required"),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;
