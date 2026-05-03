@@ -1,4 +1,7 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaNeon } from "@prisma/adapter-neon";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
@@ -69,7 +72,15 @@ export async function seedLaunchData(prisma: SeedPrismaClient) {
 }
 
 export function createPrismaClient() {
-  return new PrismaClient();
+  const connectionString = loadDatabaseUrl();
+
+  if (!connectionString) {
+    throw new Error("DATABASE_URL is required and must point to a Neon database.");
+  }
+
+  const adapter = new PrismaNeon({ connectionString });
+
+  return new PrismaClient({ adapter });
 }
 
 async function main() {
@@ -87,4 +98,27 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     console.error(error);
     process.exit(1);
   });
+}
+
+function loadDatabaseUrl(): string | undefined {
+  if (process.env.DATABASE_URL) {
+    return process.env.DATABASE_URL;
+  }
+
+  for (const candidate of [".env.local", ".env"]) {
+    const filePath = resolve(process.cwd(), candidate);
+
+    try {
+      const contents = readFileSync(filePath, "utf8");
+      const match = contents.match(/^DATABASE_URL\s*=\s*["']?(.+?)["']?$/m);
+
+      if (match?.[1]) {
+        return match[1];
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  return undefined;
 }

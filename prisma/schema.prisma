@@ -42,17 +42,17 @@ model Sport {
 }
 
 model Competition {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   sportId   String
-  sport     Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  sport     Sport      @relation(fields: [sportId], references: [id], onDelete: Cascade)
   name      String
   slug      String
   region    String?
   seasons   Season[]
   events    Event[]
   standings Standing[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   @@unique([sportId, slug])
   @@index([sportId])
@@ -125,27 +125,27 @@ model Venue {
 }
 
 model Event {
-  id             String       @id @default(cuid())
-  sportId        String
-  sport          Sport        @relation(fields: [sportId], references: [id], onDelete: Cascade)
-  competitionId  String?
-  competition    Competition? @relation(fields: [competitionId], references: [id], onDelete: SetNull)
-  seasonId       String?
-  season         Season?      @relation(fields: [seasonId], references: [id], onDelete: SetNull)
-  venueId        String?
-  venue          Venue?       @relation(fields: [venueId], references: [id], onDelete: SetNull)
-  homeTeamId     String?
-  homeTeam       Team?        @relation("HomeTeam", fields: [homeTeamId], references: [id], onDelete: SetNull)
-  awayTeamId     String?
-  awayTeam       Team?        @relation("AwayTeam", fields: [awayTeamId], references: [id], onDelete: SetNull)
-  slug           String
-  kickoffAt      DateTime
-  status         EventStatus  @default(scheduled)
-  scores         Score[]
-  providerLinks  ProviderMapping[]
-  trendScores    TrendScore[]
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id            String            @id @default(cuid())
+  sportId       String
+  sport         Sport             @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  competitionId String?
+  competition   Competition?      @relation(fields: [competitionId], references: [id], onDelete: SetNull)
+  seasonId      String?
+  season        Season?           @relation(fields: [seasonId], references: [id], onDelete: SetNull)
+  venueId       String?
+  venue         Venue?            @relation(fields: [venueId], references: [id], onDelete: SetNull)
+  homeTeamId    String?
+  homeTeam      Team?             @relation("HomeTeam", fields: [homeTeamId], references: [id], onDelete: SetNull)
+  awayTeamId    String?
+  awayTeam      Team?             @relation("AwayTeam", fields: [awayTeamId], references: [id], onDelete: SetNull)
+  slug          String
+  kickoffAt     DateTime
+  status        EventStatus       @default(scheduled)
+  scores        Score[]
+  providerLinks ProviderMapping[]
+  trendScores   TrendScore[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
 
   @@unique([sportId, slug])
   @@index([competitionId, kickoffAt])
@@ -189,16 +189,16 @@ model Standing {
 }
 
 model ProviderMapping {
-  id             String   @id @default(cuid())
-  provider       String
-  providerType   String
-  providerId     String
-  teamId         String?
-  team           Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  eventId        String?
-  event          Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id           String   @id @default(cuid())
+  provider     String
+  providerType String
+  providerId   String
+  teamId       String?
+  team         Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  eventId      String?
+  event        Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@unique([provider, providerType, providerId])
   @@index([teamId])
@@ -218,21 +218,37 @@ model ProviderSnapshot {
 }
 
 model Job {
-  id             String    @id @default(cuid())
-  type           String
-  status         JobStatus @default(pending)
-  payload        Json
-  idempotencyKey String?   @unique
-  attempts       Int       @default(0)
-  maxAttempts    Int       @default(3)
-  runAfter       DateTime  @default(now())
-  lockedAt       DateTime?
-  lastError      String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id               String            @id @default(cuid())
+  type             String
+  status           JobStatus         @default(pending)
+  payload          Json
+  idempotencyKey   String?           @unique
+  attempts         Int               @default(0)
+  maxAttempts      Int               @default(3)
+  runAfter         DateTime          @default(now())
+  lockedAt         DateTime?
+  lastError        String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  jobExecutionLogs JobExecutionLog[]
 
   @@index([status, runAfter])
   @@index([type, status])
+}
+
+model JobExecutionLog {
+  id        String   @id @default(cuid())
+  jobId     String?
+  job       Job?     @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  jobType   String
+  status    String
+  message   String?
+  attempts  Int
+  createdAt DateTime @default(now())
+
+  @@index([jobId, createdAt])
+  @@index([jobType, createdAt])
+  @@index([status, createdAt])
 }
 
 model AnonymousEvent {
