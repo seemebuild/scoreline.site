@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 import { PrismaClient } from "@prisma/client";
 import { fileURLToPath } from "node:url";
 
