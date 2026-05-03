@@ -1,6 +1,7 @@
 import { canRetryJob, getNextRetryRunAfter } from "./queue";
 import {
   claimDueJobs,
+  logJobExecution,
   markJobCompleted,
   markJobFailed,
   markJobForRetry,
@@ -52,6 +53,12 @@ export async function runJobsTick(
       const handler = handlers[job.type];
       await handler(job.payload as never, { now });
       await markJobCompleted(prisma, job.id);
+      await logJobExecution(prisma, {
+        jobId: job.id,
+        jobType: job.type,
+        status: "completed",
+        attempts: job.attempts,
+      });
       completed += 1;
     } catch (error) {
       const errorMessage = toErrorMessage(error);
@@ -62,9 +69,23 @@ export async function runJobsTick(
           getNextRetryRunAfter(now, job.attempts),
           errorMessage,
         );
+        await logJobExecution(prisma, {
+          jobId: job.id,
+          jobType: job.type,
+          status: "retrying",
+          message: errorMessage,
+          attempts: job.attempts,
+        });
         retried += 1;
       } else {
         await markJobFailed(prisma, job.id, errorMessage);
+        await logJobExecution(prisma, {
+          jobId: job.id,
+          jobType: job.type,
+          status: "failed",
+          message: errorMessage,
+          attempts: job.attempts,
+        });
         failed += 1;
       }
     }

@@ -36,6 +36,9 @@ function createPrisma(claimedJobs: Job[]): JobStorePrismaClient {
         }),
       ),
     },
+    jobExecutionLog: {
+      create: vi.fn().mockResolvedValue({ id: "log_1" }),
+    },
     $queryRaw: vi.fn().mockResolvedValue(claimedJobs),
   };
 }
@@ -60,6 +63,15 @@ describe("runJobsTick", () => {
         status: "completed",
         lockedAt: null,
         lastError: null,
+      },
+    });
+    expect(prisma.jobExecutionLog.create).toHaveBeenCalledWith({
+      data: {
+        jobId: "job_1",
+        jobType: "fixtures.sync",
+        status: "completed",
+        message: null,
+        attempts: 1,
       },
     });
   });
@@ -98,6 +110,15 @@ describe("runJobsTick", () => {
         lastError: "provider timeout",
       },
     });
+    expect(prisma.jobExecutionLog.create).toHaveBeenCalledWith({
+      data: {
+        jobId: "job_1",
+        jobType: "fixtures.sync",
+        status: "retrying",
+        message: "provider timeout",
+        attempts: 2,
+      },
+    });
   });
 
   it("marks jobs as failed when max attempts are reached", async () => {
@@ -131,6 +152,15 @@ describe("runJobsTick", () => {
         lastError: "provider timeout",
       },
     });
+    expect(prisma.jobExecutionLog.create).toHaveBeenCalledWith({
+      data: {
+        jobId: "job_1",
+        jobType: "fixtures.sync",
+        status: "failed",
+        message: "provider timeout",
+        attempts: 3,
+      },
+    });
   });
 
   it("marks unknown job types as failed when max attempts are reached", async () => {
@@ -158,6 +188,15 @@ describe("runJobsTick", () => {
         status: "failed",
         lockedAt: null,
         lastError: "Unknown job type: unknown.job",
+      },
+    });
+    expect(prisma.jobExecutionLog.create).toHaveBeenCalledWith({
+      data: {
+        jobId: "job_1",
+        jobType: "unknown.job",
+        status: "failed",
+        message: "Unknown job type: unknown.job",
+        attempts: 3,
       },
     });
   });
