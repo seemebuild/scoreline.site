@@ -57,3 +57,7 @@ export type JobPayloadMap = {
 };
 
 export type JobPayload<TType extends JobType> = JobPayloadMap[TType];
+
+export function isJobType(value: string): value is JobType {
+  return JOB_TYPES.includes(value as JobType);
+}

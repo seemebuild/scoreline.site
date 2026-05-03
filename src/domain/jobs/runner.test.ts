@@ -132,4 +132,33 @@ describe("runJobsTick", () => {
       },
     });
   });
+
+  it("marks unknown job types as failed when max attempts are reached", async () => {
+    const prisma = createPrisma([
+      buildJob({
+        type: "unknown.job",
+        attempts: 3,
+        maxAttempts: 3,
+      }),
+    ]);
+
+    const result = await runJobsTick(prisma, {
+      limit: 10,
+    });
+
+    expect(result).toEqual({
+      claimed: 1,
+      completed: 0,
+      retried: 0,
+      failed: 1,
+    });
+    expect(prisma.job.update).toHaveBeenCalledWith({
+      where: { id: "job_1" },
+      data: {
+        status: "failed",
+        lockedAt: null,
+        lastError: "Unknown job type: unknown.job",
+      },
+    });
+  });
 });
