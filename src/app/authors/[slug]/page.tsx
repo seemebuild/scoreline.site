@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { SiteShell } from "../../components/site-shell";
 import { createSanityClient } from "../../../domain/editorial/client";
 import { getEditorialAuthorBySlug, getEditorialArticles } from "../../../domain/editorial/content";
+import { buildBreadcrumbSchema } from "../../../domain/seo/schema";
 
 type AuthorPageParams = {
   slug: string;
@@ -30,6 +31,18 @@ export default async function AuthorPage({ params }: { params: AuthorPageParams 
   return (
     <SiteShell>
       <section className="mx-auto max-w-3xl px-5 py-10 sm:px-8">
+        <script
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(
+              buildBreadcrumbSchema([
+                { name: "Home", url: "https://scoreline.site" },
+                { name: "Authors", url: "https://scoreline.site/authors" },
+                { name: author.name, url: `https://scoreline.site/authors/${params.slug}` },
+              ]),
+            ),
+          }}
+          type="application/ld+json"
+        />
         <p className="text-sm font-bold uppercase text-[color:var(--accent-strong)]">Author</p>
         <h1 className="mt-2 text-4xl font-black">{author.name}</h1>
         <p className="mt-4 text-lg leading-8 text-[color:var(--muted)]">{author.bio}</p>
