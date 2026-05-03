@@ -80,6 +80,29 @@ export async function getSoccerLiveScoreRows(prisma: PublicSportsPrismaClient): 
     }));
 }
 
+export async function getSoccerResultRows(prisma: PublicSportsPrismaClient): Promise<PublicLiveScoreRow[]> {
+  const rows = await prisma.event.findMany({
+    where: { sport: { slug: "soccer" } },
+    orderBy: [{ kickoffAt: "desc" }],
+    take: 20,
+    include: {
+      competition: true,
+      homeTeam: true,
+      awayTeam: true,
+      venue: true,
+      scores: true,
+    },
+  });
+
+  return rows
+    .filter((row) => row.status === "completed")
+    .map((row) => ({
+      ...mapEventToFixtureRow(row),
+      homeScore: latestScore(row)?.homeScore ?? null,
+      awayScore: latestScore(row)?.awayScore ?? null,
+    }));
+}
+
 function mapEventToFixtureRow(row: PublicEventRow): PublicFixtureRow {
   return {
     id: row.id,
