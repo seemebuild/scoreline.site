@@ -21,6 +21,7 @@ type SoccerApiFootballClient = ApiFootballTransport & {
   getLeagues: <TResponse = unknown>(params?: ApiFootballRequestParams) => Promise<TResponse>;
   getFixtures: <TResponse = unknown>(params?: ApiFootballRequestParams) => Promise<TResponse>;
   getStandings: <TResponse = unknown>(params?: ApiFootballRequestParams) => Promise<TResponse>;
+  getResults: <TResponse = unknown>(params?: ApiFootballRequestParams) => Promise<TResponse>;
 };
 
 export function createApiFootballSoccerClient(options: ApiFootballClientOptions): SoccerApiFootballClient {
@@ -31,6 +32,7 @@ export function createApiFootballSoccerClient(options: ApiFootballClientOptions)
     getLeagues: (params) => transport.get("leagues", params),
     getFixtures: (params) => transport.get("fixtures", params),
     getStandings: (params) => transport.get("standings", params),
+    getResults: (params) => transport.get("fixtures", params),
   };
 }
 
