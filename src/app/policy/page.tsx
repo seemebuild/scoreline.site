@@ -9,6 +9,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/policy",
   },
+  openGraph: {
+    title: "Policy",
+    description: "Read Scoreline editorial and trust policies.",
+    url: "/policy",
+    type: "website",
+  },
 };
 
 const policyLinks = [
