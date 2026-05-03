@@ -10,8 +10,16 @@ export type EditorialAuthor = {
 };
 
 export type EditorialSource = {
+  id: string;
   label: string;
   url: string;
+};
+
+export type EditorialCategory = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
 };
 
 export type EditorialAuthorCard = {
@@ -31,5 +39,6 @@ export type EditorialArticle = {
   status: ArticleStatus;
   publishedAt: string | null;
   author: EditorialAuthor | null;
+  category: EditorialCategory | null;
   sources: EditorialSource[];
 };

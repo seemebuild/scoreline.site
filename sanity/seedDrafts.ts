@@ -6,6 +6,22 @@ export type SanityDraft = {
   body: string;
 };
 
+const editorialCategoryDraft: SanityDraft = {
+  _type: "category",
+  title: "Editorial",
+  slug: "editorial",
+  status: "draft",
+  body: "Scoreline editorial coverage and newsroom updates.",
+};
+
+const scorelineEditorialSourceDraft: SanityDraft = {
+  _type: "source",
+  title: "Scoreline Editorial Desk",
+  slug: "scoreline-editorial-desk",
+  status: "draft",
+  body: "Primary editorial source reference for the launch newsroom.",
+};
+
 export const policyDrafts: SanityDraft[] = [
   {
     _type: "article",
@@ -41,5 +57,5 @@ export const starterArticleDrafts: SanityDraft[] = [
 ];
 
 export function getSeedDrafts(): SanityDraft[] {
-  return [...policyDrafts, ...starterArticleDrafts];
+  return [editorialCategoryDraft, scorelineEditorialSourceDraft, ...policyDrafts, ...starterArticleDrafts];
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { getEditorialArticleBySlug, getEditorialArticles, getEditorialAuthorBySlug, getEditorialAuthors } from "./content";
+import { getEditorialArticleBySlug, getEditorialArticles, getEditorialAuthorBySlug, getEditorialAuthors, getEditorialCategories, getEditorialCategoryBySlug } from "./content";
 
 describe("getEditorialArticles", () => {
   it("returns fallback editorial content without a client", async () => {
@@ -56,5 +56,22 @@ describe("getEditorialAuthorBySlug", () => {
     const author = await getEditorialAuthorBySlug("scoreline-editorial");
 
     expect(author?.name).toBe("Scoreline Editorial");
+  });
+});
+
+describe("getEditorialCategories", () => {
+  it("returns fallback categories without a client", async () => {
+    const categories = await getEditorialCategories();
+
+    expect(categories).toHaveLength(1);
+    expect(categories[0]?.slug).toBe("editorial");
+  });
+});
+
+describe("getEditorialCategoryBySlug", () => {
+  it("returns the fallback editorial category by slug", async () => {
+    const category = await getEditorialCategoryBySlug("editorial");
+
+    expect(category?.name).toBe("Editorial");
   });
 });

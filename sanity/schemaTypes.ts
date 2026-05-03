@@ -11,6 +11,7 @@ export const schemaTypes = [
       { name: "status", title: "Status", type: "string" },
       { name: "publishedAt", title: "Published at", type: "datetime" },
       { name: "author", title: "Author", type: "reference", to: [{ type: "author" }] },
+      { name: "category", title: "Category", type: "reference", to: [{ type: "category" }] },
       { name: "sources", title: "Sources", type: "array", of: [{ type: "reference", to: [{ type: "source" }] }] },
     ],
   },
@@ -31,6 +32,16 @@ export const schemaTypes = [
     fields: [
       { name: "label", title: "Label", type: "string" },
       { name: "url", title: "URL", type: "url" },
+    ],
+  },
+  {
+    name: "category",
+    title: "Category",
+    type: "document",
+    fields: [
+      { name: "name", title: "Name", type: "string" },
+      { name: "slug", title: "Slug", type: "slug", options: { source: "name" } },
+      { name: "description", title: "Description", type: "text" },
     ],
   },
 ] as const;
