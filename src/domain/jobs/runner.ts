@@ -6,20 +6,11 @@ import {
   markJobForRetry,
   type JobStorePrismaClient,
 } from "./store";
-import type { JobPayload, JobType } from "./types";
-
-export type JobHandlerContext = {
-  now: Date;
-};
-
-export type JobHandler<TType extends JobType> = (
-  payload: JobPayload<TType>,
-  context: JobHandlerContext,
-) => Promise<void>;
-
-export type JobHandlerRegistry = {
-  [K in JobType]: JobHandler<K>;
-};
+import {
+  defaultJobHandlers,
+  type JobHandlerRegistry,
+} from "./handlers";
+import { isJobType } from "./types";
 
 export type RunJobsTickInput = {
   limit: number;
@@ -39,7 +30,10 @@ export async function runJobsTick(
   input: RunJobsTickInput,
 ): Promise<RunJobsTickResult> {
   const now = input.now ?? new Date();
-  const handlers = buildHandlers(input.handlers);
+  const handlers = {
+    ...defaultJobHandlers,
+    ...input.handlers,
+  } satisfies JobHandlerRegistry;
   const claimedJobs = await claimDueJobs(prisma, {
     limit: input.limit,
     now,
@@ -50,8 +44,12 @@ export async function runJobsTick(
   let failed = 0;
 
   for (const job of claimedJobs) {
-    const handler = handlers[job.type as JobType];
     try {
+      if (!isJobType(job.type)) {
+        throw new Error(`Unknown job type: ${job.type}`);
+      }
+
+      const handler = handlers[job.type];
       await handler(job.payload as never, { now });
       await markJobCompleted(prisma, job.id);
       completed += 1;
@@ -77,24 +75,6 @@ export async function runJobsTick(
     completed,
     retried,
     failed,
-  };
-}
-
-function buildHandlers(handlers?: Partial<JobHandlerRegistry>): JobHandlerRegistry {
-  const fallback = async () => {};
-
-  return {
-    "fixtures.sync": handlers?.["fixtures.sync"] ?? fallback,
-    "live-scores.sync": handlers?.["live-scores.sync"] ?? fallback,
-    "results.finalize": handlers?.["results.finalize"] ?? fallback,
-    "standings.sync": handlers?.["standings.sync"] ?? fallback,
-    "provider-snapshots.cleanup": handlers?.["provider-snapshots.cleanup"] ?? fallback,
-    "ai-drafts.generate": handlers?.["ai-drafts.generate"] ?? fallback,
-    "sanity-drafts.create": handlers?.["sanity-drafts.create"] ?? fallback,
-    "algolia.index": handlers?.["algolia.index"] ?? fallback,
-    "trends.refresh": handlers?.["trends.refresh"] ?? fallback,
-    "feedback.notify": handlers?.["feedback.notify"] ?? fallback,
-    "cache.revalidate": handlers?.["cache.revalidate"] ?? fallback,
   };
 }
 
