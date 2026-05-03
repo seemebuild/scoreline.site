@@ -32,6 +32,10 @@ describe("enqueueJob", () => {
         create: vi.fn(),
         update: vi.fn(),
       },
+      jobExecutionLog: {
+        create: vi.fn(),
+        findMany: vi.fn(),
+      },
       $queryRaw: vi.fn(),
     } satisfies JobStorePrismaClient;
 
@@ -52,6 +56,10 @@ describe("enqueueJob", () => {
         findUnique: vi.fn().mockResolvedValue(null),
         create: vi.fn().mockResolvedValue(createdJob),
         update: vi.fn(),
+      },
+      jobExecutionLog: {
+        create: vi.fn(),
+        findMany: vi.fn(),
       },
       $queryRaw: vi.fn(),
     } satisfies JobStorePrismaClient;
@@ -90,6 +98,10 @@ describe("claimDueJobs", () => {
         create: vi.fn(),
         update: vi.fn(),
       },
+      jobExecutionLog: {
+        create: vi.fn(),
+        findMany: vi.fn(),
+      },
       $queryRaw: queryRaw,
     } satisfies JobStorePrismaClient;
 
@@ -104,5 +116,42 @@ describe("claimDueJobs", () => {
     const [sqlArg] = queryRaw.mock.calls[0] as [Prisma.Sql];
     expect(sqlArg.strings.join(" ")).toContain("FOR UPDATE SKIP LOCKED");
     expect(sqlArg.strings.join(" ")).toContain("UPDATE \"Job\" AS job");
+  });
+});
+
+describe("logJobExecution", () => {
+  it("writes audit log rows for job attempts", async () => {
+    const create = vi.fn().mockResolvedValue({ id: "log_1" });
+    const prisma = {
+      job: {
+        findUnique: vi.fn(),
+        create: vi.fn(),
+        update: vi.fn(),
+      },
+      jobExecutionLog: {
+        create,
+        findMany: vi.fn(),
+      },
+      $queryRaw: vi.fn(),
+    } satisfies JobStorePrismaClient;
+
+    const { logJobExecution } = await import("./store");
+
+    await logJobExecution(prisma, {
+      jobId: "job_1",
+      jobType: "fixtures.sync",
+      status: "completed",
+      attempts: 2,
+    });
+
+    expect(create).toHaveBeenCalledWith({
+      data: {
+        jobId: "job_1",
+        jobType: "fixtures.sync",
+        status: "completed",
+        message: null,
+        attempts: 2,
+      },
+    });
   });
 });

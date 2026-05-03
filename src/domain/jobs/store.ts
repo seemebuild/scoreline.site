@@ -25,6 +25,31 @@ export type JobStorePrismaClient = {
       };
     }) => Promise<Job>;
   };
+  jobExecutionLog: {
+    create: (args: {
+      data: {
+        jobId?: string | null;
+        jobType: string;
+        status: string;
+        message?: string | null;
+        attempts: number;
+      };
+    }) => Promise<unknown>;
+    findMany: (args: {
+      orderBy: { createdAt: "asc" | "desc" };
+      take: number;
+    }) => Promise<
+      Array<{
+        id: string;
+        jobId: string | null;
+        jobType: string;
+        status: string;
+        message: string | null;
+        attempts: number;
+        createdAt: Date;
+      }>
+    >;
+  };
   $queryRaw: <TRow>(query: Prisma.Sql) => Promise<TRow>;
 };
 
@@ -162,5 +187,46 @@ export async function markJobFailed(
       lockedAt: null,
       lastError: errorMessage,
     },
+  });
+}
+
+export async function logJobExecution(
+  prisma: JobStorePrismaClient,
+  input: {
+    jobId?: string | null;
+    jobType: string;
+    status: string;
+    message?: string | null;
+    attempts: number;
+  },
+): Promise<unknown> {
+  return prisma.jobExecutionLog.create({
+    data: {
+      jobId: input.jobId ?? null,
+      jobType: input.jobType,
+      status: input.status,
+      message: input.message ?? null,
+      attempts: input.attempts,
+    },
+  });
+}
+
+export async function listJobExecutionLogs(
+  prisma: JobStorePrismaClient,
+  limit: number,
+): Promise<
+  Array<{
+    id: string;
+    jobId: string | null;
+    jobType: string;
+    status: string;
+    message: string | null;
+    attempts: number;
+    createdAt: Date;
+  }>
+> {
+  return prisma.jobExecutionLog.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
   });
 }
