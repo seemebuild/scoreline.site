@@ -30,6 +30,7 @@ describe("enqueueJob", () => {
       job: {
         findUnique: vi.fn().mockResolvedValue(existingJob),
         create: vi.fn(),
+        update: vi.fn(),
       },
       $queryRaw: vi.fn(),
     } satisfies JobStorePrismaClient;
@@ -50,6 +51,7 @@ describe("enqueueJob", () => {
       job: {
         findUnique: vi.fn().mockResolvedValue(null),
         create: vi.fn().mockResolvedValue(createdJob),
+        update: vi.fn(),
       },
       $queryRaw: vi.fn(),
     } satisfies JobStorePrismaClient;
@@ -86,6 +88,7 @@ describe("claimDueJobs", () => {
       job: {
         findUnique: vi.fn(),
         create: vi.fn(),
+        update: vi.fn(),
       },
       $queryRaw: queryRaw,
     } satisfies JobStorePrismaClient;
