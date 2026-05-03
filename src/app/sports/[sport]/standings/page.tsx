@@ -22,6 +22,7 @@ export function generateMetadata({ params }: { params: SportPageParams }): Metad
     title: `${sport.name} standings`,
     description: `League tables and standings for ${sport.name}.`,
     canonicalPath: `${buildSportPath(sport.slug)}/standings`,
+    noindex: true,
   });
 }
 

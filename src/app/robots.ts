@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/news", "/authors", "/policy", "/studio"],
+        allow: ["/", "/about", "/contact", "/news", "/authors", "/categories", "/policy", "/scores", "/fixtures", "/results", "/sports", "/studio"],
       },
     ],
     sitemap: "https://scoreline.site/sitemap.xml",
