@@ -14,6 +14,14 @@ export type EditorialSource = {
   url: string;
 };
 
+export type EditorialAuthorCard = {
+  id: string;
+  name: string;
+  slug: string;
+  bio: string | null;
+  articleCount: number;
+};
+
 export type EditorialArticle = {
   id: string;
   slug: string;

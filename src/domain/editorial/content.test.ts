@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { getEditorialArticleBySlug, getEditorialArticles } from "./content";
+import { getEditorialArticleBySlug, getEditorialArticles, getEditorialAuthorBySlug, getEditorialAuthors } from "./content";
 
 describe("getEditorialArticles", () => {
   it("returns fallback editorial content without a client", async () => {
@@ -39,5 +39,22 @@ describe("getEditorialArticleBySlug", () => {
     const article = await getEditorialArticleBySlug("launch-editorial-placeholder");
 
     expect(article?.title).toContain("Scoreline editorial workflow");
+  });
+});
+
+describe("getEditorialAuthors", () => {
+  it("returns fallback author content without a client", async () => {
+    const authors = await getEditorialAuthors();
+
+    expect(authors).toHaveLength(1);
+    expect(authors[0]?.slug).toBe("scoreline-editorial");
+  });
+});
+
+describe("getEditorialAuthorBySlug", () => {
+  it("returns fallback author by slug", async () => {
+    const author = await getEditorialAuthorBySlug("scoreline-editorial");
+
+    expect(author?.name).toBe("Scoreline Editorial");
   });
 });
