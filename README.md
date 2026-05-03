@@ -71,6 +71,15 @@ Seed launch sports and soccer competitions:
 pnpm db:seed
 ```
 
+Verify migrations, seed, and constraint checks against a live database:
+
+```bash
+pnpm db:verify
+```
+
+This command requires a reachable Postgres database at the configured
+`DATABASE_URL`.
+
 ## Milestone 0
 
 This baseline includes the Next.js App Router scaffold, TypeScript, linting,
