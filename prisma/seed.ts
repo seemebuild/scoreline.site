@@ -1,13 +1,40 @@
+import "dotenv/config";
+
 import { PrismaClient } from "@prisma/client";
+import { fileURLToPath } from "node:url";
 
 import {
   LAUNCH_SOCCER_COMPETITIONS,
   LAUNCH_SPORTS,
 } from "../src/domain/sports/launch-catalog";
 
-const prisma = new PrismaClient();
+export type SeedPrismaClient = {
+  sport: {
+    upsert: (args: {
+      where: { slug: string };
+      update: { name: string };
+      create: { name: string; slug: string };
+    }) => Promise<unknown>;
+    findUniqueOrThrow: (args: {
+      where: { slug: string };
+      select: { id: true };
+    }) => Promise<{ id: string }>;
+  };
+  competition: {
+    upsert: (args: {
+      where: { sportId_slug: { sportId: string; slug: string } };
+      update: { name: string; region: string };
+      create: {
+        sportId: string;
+        name: string;
+        slug: string;
+        region: string;
+      };
+    }) => Promise<unknown>;
+  };
+};
 
-async function main() {
+export async function seedLaunchData(prisma: SeedPrismaClient) {
   for (const sport of LAUNCH_SPORTS) {
     await prisma.sport.upsert({
       where: { slug: sport.slug },
@@ -43,12 +70,23 @@ async function main() {
   }
 }
 
-main()
-  .then(async () => {
+export function createPrismaClient() {
+  return new PrismaClient();
+}
+
+async function main() {
+  const prisma = createPrismaClient();
+
+  try {
+    await seedLaunchData(prisma);
+  } finally {
     await prisma.$disconnect();
-  })
-  .catch(async (error: unknown) => {
+  }
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch((error: unknown) => {
     console.error(error);
-    await prisma.$disconnect();
     process.exit(1);
   });
+}
