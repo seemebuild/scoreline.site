@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { SiteShell } from "../components/site-shell";
+import { createSanityClient } from "../../domain/editorial/client";
+import { getEditorialArticles } from "../../domain/editorial/content";
 
 export const metadata: Metadata = {
   title: "News",
@@ -11,15 +13,10 @@ export const metadata: Metadata = {
   },
 };
 
-const stories = [
-  {
-    slug: "launching-scoreline-editorial",
-    title: "Scoreline editorial coverage is coming online",
-    summary: "A public editorial shell is now in place while the Sanity workflow is wired up behind it.",
-  },
-] as const;
+export default async function NewsPage() {
+  const client = createSanityClient();
+  const stories = await getEditorialArticles(client ?? undefined);
 
-export default function NewsPage() {
   return (
     <SiteShell>
       <section className="mx-auto max-w-5xl px-5 py-10 sm:px-8">

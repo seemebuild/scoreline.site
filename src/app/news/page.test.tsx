@@ -4,8 +4,8 @@ import { describe, expect, it } from "vitest";
 import NewsPage from "./page";
 
 describe("NewsPage", () => {
-  it("renders the editorial shell", () => {
-    render(<NewsPage />);
+  it("renders the editorial shell", async () => {
+    render(await NewsPage());
 
     expect(
       screen.getByRole("heading", {
@@ -13,6 +13,6 @@ describe("NewsPage", () => {
         name: /editorial coverage/i,
       }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /scoreline editorial coverage is coming online/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /scoreline editorial workflow is coming online/i })).toBeInTheDocument();
   });
 });
