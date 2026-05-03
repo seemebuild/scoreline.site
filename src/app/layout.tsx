@@ -20,19 +20,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(buildOrganizationSchema()),
-        }}
-        type="application/ld+json"
-      />
-      <script
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(buildWebSiteSchema()),
-        }}
-        type="application/ld+json"
-      />
+      <body>
+        {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(buildOrganizationSchema()),
+          }}
+          type="application/ld+json"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(buildWebSiteSchema()),
+          }}
+          type="application/ld+json"
+        />
+      </body>
     </html>
   );
 }
