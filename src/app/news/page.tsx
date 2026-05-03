@@ -4,20 +4,13 @@ import Link from "next/link";
 import { SiteShell } from "../components/site-shell";
 import { createSanityClient } from "../../domain/editorial/client";
 import { getEditorialArticles } from "../../domain/editorial/content";
+import { buildPageMetadata } from "../../domain/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "News",
   description: "Editorial coverage and sports reporting from Scoreline.",
-  alternates: {
-    canonical: "/news",
-  },
-  openGraph: {
-    title: "News",
-    description: "Editorial coverage and sports reporting from Scoreline.",
-    url: "/news",
-    type: "website",
-  },
-};
+  canonicalPath: "/news",
+});
 
 export default async function NewsPage() {
   const client = createSanityClient();

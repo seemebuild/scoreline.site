@@ -4,20 +4,13 @@ import Link from "next/link";
 import { SiteShell } from "../components/site-shell";
 import { createSanityClient } from "../../domain/editorial/client";
 import { getEditorialAuthors } from "../../domain/editorial/content";
+import { buildPageMetadata } from "../../domain/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Authors",
   description: "Meet the Scoreline editorial team.",
-  alternates: {
-    canonical: "/authors",
-  },
-  openGraph: {
-    title: "Authors",
-    description: "Meet the Scoreline editorial team.",
-    url: "/authors",
-    type: "website",
-  },
-};
+  canonicalPath: "/authors",
+});
 
 export default async function AuthorsPage() {
   const authors = await getEditorialAuthors(createSanityClient() ?? undefined);

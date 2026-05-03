@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { SiteShell } from "../../components/site-shell";
 import { launchSports, getSportPath } from "../../../domain/sports/public-catalog";
 import { buildSportPath } from "../../../domain/sports/routing";
+import { buildPageMetadata } from "../../../domain/seo/metadata";
 
 type SportPageParams = {
   sport: string;
@@ -21,13 +22,11 @@ export function generateMetadata({ params }: { params: SportPageParams }): Metad
     return {};
   }
 
-  return {
+  return buildPageMetadata({
     title: `${sport.name}`,
     description: `Live scores, fixtures, standings, and editorial coverage for ${sport.name}.`,
-    alternates: {
-      canonical: buildSportPath(sport.slug),
-    },
-  };
+    canonicalPath: buildSportPath(sport.slug),
+  });
 }
 
 export default function SportPage({ params }: { params: SportPageParams }) {

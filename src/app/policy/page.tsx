@@ -2,20 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { SiteShell } from "../components/site-shell";
+import { buildPageMetadata } from "../../domain/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Policy",
   description: "Read Scoreline editorial and trust policies.",
-  alternates: {
-    canonical: "/policy",
-  },
-  openGraph: {
-    title: "Policy",
-    description: "Read Scoreline editorial and trust policies.",
-    url: "/policy",
-    type: "website",
-  },
-};
+  canonicalPath: "/policy",
+});
 
 const policyLinks = [
   { href: "/policy/editorial", title: "Editorial policy" },

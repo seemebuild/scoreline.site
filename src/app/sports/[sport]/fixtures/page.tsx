@@ -6,6 +6,7 @@ import { launchSports } from "../../../../domain/sports/public-catalog";
 import { buildSportPath } from "../../../../domain/sports/routing";
 import { createJobsPrismaClient } from "../../../../domain/jobs/client";
 import { getSoccerFixtureRows } from "../../../../domain/sports/public-data";
+import { buildPageMetadata } from "../../../../domain/seo/metadata";
 
 type SportPageParams = {
   sport: string;
@@ -19,13 +20,11 @@ export function generateMetadata({ params }: { params: SportPageParams }): Metad
   const sport = launchSports.find((item: (typeof launchSports)[number]) => item.slug === params.sport);
   if (!sport) return {};
 
-  return {
+  return buildPageMetadata({
     title: `${sport.name} fixtures`,
     description: `Upcoming fixtures for ${sport.name}.`,
-    alternates: {
-      canonical: `${buildSportPath(sport.slug)}/fixtures`,
-    },
-  };
+    canonicalPath: `${buildSportPath(sport.slug)}/fixtures`,
+  });
 }
 
 export default async function SportFixturesPage({ params }: { params: SportPageParams }) {
