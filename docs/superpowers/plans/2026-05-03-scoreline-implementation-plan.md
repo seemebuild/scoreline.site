@@ -3,6 +3,31 @@
 Date: 2026-05-03
 Source spec: `docs/superpowers/specs/2026-05-03-scoreline-design.md`
 Target launch: before 2026-06-11
+Last updated: 2026-05-03
+
+## Current Status
+
+- Milestone 0 is complete and merged in PR #1: `feat: add Scoreline app baseline`.
+- Milestone 1 has started:
+  - Prisma now includes the first normalized sports and operations schema.
+  - Sports route helpers cover canonical slugs, sport paths, competition paths, and event paths.
+  - Event lifecycle helpers cover internal statuses, public status groups, and API-Football status mapping.
+  - Launch seed catalog now covers target sports and must-have soccer competitions.
+  - Initial Prisma migration SQL is generated.
+- Latest verified gates:
+  - `pnpm lint`
+  - `pnpm typecheck`
+  - `pnpm test`
+  - `pnpm test:e2e`
+  - `pnpm exec prisma validate`
+- Local note: Playwright needs localhost binding permission in the Codex sandbox, but the e2e smoke test passes when allowed.
+
+## Immediate Next Slice
+
+Finish Milestone 1 in a small PR:
+
+- Run the Prisma migration against a reachable Postgres database.
+- Add database-backed verification for duplicate provider mapping constraints if a local Postgres test database is available; otherwise document the manual migration verification step.
 
 ## Planning Principles
 
@@ -16,75 +41,79 @@ Target launch: before 2026-06-11
 
 ## Milestone 0: Repository And Engineering Baseline
 
+Status: Complete. Merged in PR #1.
+
 Goal: create a reliable Next.js foundation before product work begins.
 
 ### Scope
 
-- Scaffold Next.js App Router app with TypeScript.
-- Add linting, formatting, and strict TypeScript config.
-- Add Tailwind or the chosen styling stack.
-- Add Vitest for unit/integration tests.
-- Add Playwright for browser smoke tests.
-- Add Prisma with initial Postgres configuration.
-- Add environment variable validation.
-- Add CI workflow for lint, typecheck, unit tests, and Playwright smoke tests.
-- Add basic app shell with light/dark theme tokens.
-- Add README with local setup, required services, and command reference.
+- [x] Scaffold Next.js App Router app with TypeScript.
+- [x] Add linting, formatting, and strict TypeScript config.
+- [x] Add Tailwind or the chosen styling stack.
+- [x] Add Vitest for unit/integration tests.
+- [x] Add Playwright for browser smoke tests.
+- [x] Add Prisma with initial Postgres configuration.
+- [x] Add environment variable validation.
+- [x] Add CI workflow for lint, typecheck, unit tests, and Playwright smoke tests.
+- [x] Add basic app shell with light/dark theme tokens.
+- [x] Add README with local setup, required services, and command reference.
 
 ### Test Gate
 
-- `lint` passes.
-- `typecheck` passes.
-- Unit test runner passes with at least one baseline test.
-- Playwright opens the homepage and verifies non-empty render.
-- CI runs the same checks.
+- [x] `lint` passes.
+- [x] `typecheck` passes.
+- [x] Unit test runner passes with at least one baseline test.
+- [x] Playwright opens the homepage and verifies non-empty render.
+- [x] CI runs the same checks.
 
 ### Suggested Commits
 
-- `chore: scaffold Next.js app`
-- `chore: add quality gates`
-- `test: add baseline smoke tests`
+- Completed as `feat: add Scoreline app baseline`.
 
 ## Milestone 1: Domain Model And Database Foundation
+
+Status: In progress. Core schema and helper tests are present; seed data, migration workflow, and database constraint verification remain.
 
 Goal: establish the normalized sports and operations data model.
 
 ### Scope
 
-- Create Prisma schema for:
-  - sports
-  - competitions
-  - seasons
-  - teams
-  - athletes
-  - venues
-  - events/fixtures
-  - scores/statuses
-  - standings
-  - provider mappings
-  - provider snapshots
-  - jobs
-  - anonymous events
-  - trend scores
-  - feedback submissions
-- Add seed data for target sports and must-have soccer competitions.
-- Add internal enum/status model for event lifecycle.
-- Add canonical slug and URL helper functions.
-- Add database indexes for route lookups, provider mappings, event status, kickoff time, and trending.
-- Add migration workflow documentation.
+- [x] Create Prisma schema for:
+  - [x] sports
+  - [x] competitions
+  - [x] seasons
+  - [x] teams
+  - [x] athletes
+  - [x] venues
+  - [x] events/fixtures
+  - [x] scores/statuses
+  - [x] standings
+  - [x] provider mappings
+  - [x] provider snapshots
+  - [x] jobs
+  - [x] anonymous events
+  - [x] trend scores
+  - [x] feedback submissions
+- [x] Add seed data for target sports and must-have soccer competitions.
+- [x] Add internal enum/status model for event lifecycle.
+- [x] Add canonical slug and URL helper functions.
+- [x] Add database indexes for route lookups, provider mappings, event status, kickoff time, and trending.
+- [x] Add migration workflow documentation.
 
 ### Test Gate
 
-- Prisma migration applies cleanly.
-- Seed script creates required sports and soccer competitions.
-- Unit tests cover URL builders, slug generation, event statuses, and enum mappings.
-- Database constraints prevent duplicate provider mappings where expected.
+- [ ] Prisma migration applies cleanly against Postgres. Migration SQL has been generated; local apply is blocked until a Postgres database is reachable.
+- [x] Seed script creates required sports and soccer competitions.
+- [x] Unit tests cover URL builders, slug generation, event statuses, and enum mappings.
+- [ ] Database constraints prevent duplicate provider mappings where expected.
 
 ### Suggested Commits
 
-- `feat: add core sports data model`
-- `feat: seed launch sports and competitions`
-- `test: cover slugs and event statuses`
+- Completed in PR #1:
+  - `feat: add Scoreline app baseline`
+- Remaining:
+  - `test: verify Prisma migration against Postgres`
+  - `test: cover seed data and provider constraints`
 
 ## Milestone 2: Job Queue And Scheduler Foundation
 
