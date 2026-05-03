@@ -18,6 +18,7 @@ describe("buildPageMetadata", () => {
 
     expect(metadata.title).toBe("News");
     expect(metadata.alternates?.canonical).toBe("/news");
+    expect(metadata.openGraph?.url).toBe("https://scoreline.site/news");
   });
 });
 
