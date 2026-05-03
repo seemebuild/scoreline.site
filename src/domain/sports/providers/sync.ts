@@ -1,4 +1,5 @@
 import { buildApiFootballSnapshot, mapApiFootballFixture, mapApiFootballLeague } from "./api-football";
+import { persistApiFootballSoccerSync } from "./persist";
 import type { ProviderSnapshot } from "./types";
 
 type ApiFootballClient = {
@@ -7,6 +8,10 @@ type ApiFootballClient = {
 
 type SyncApiFootballSoccerDataInput = {
   now: Date;
+};
+
+type SyncApiFootballSoccerDataOptions = {
+  persistenceStore?: Parameters<typeof persistApiFootballSoccerSync>[0];
 };
 
 type SyncApiFootballSoccerDataResult = {
@@ -18,6 +23,7 @@ type SyncApiFootballSoccerDataResult = {
 export async function syncApiFootballSoccerData(
   client: ApiFootballClient,
   input: SyncApiFootballSoccerDataInput,
+  options: SyncApiFootballSoccerDataOptions = {},
 ): Promise<SyncApiFootballSoccerDataResult> {
   const leaguesResponse = await client.get<{ response?: unknown[] }>("leagues");
   const fixturesResponse = await client.get<{ response?: unknown[] }>("fixtures");
@@ -36,12 +42,22 @@ export async function syncApiFootballSoccerData(
     }),
   );
 
+  const snapshots = [
+    buildApiFootballSnapshot(leaguesResponse, "leagues", null, input.now),
+    buildApiFootballSnapshot(fixturesResponse, "fixtures", null, input.now),
+  ];
+
+  if (options.persistenceStore) {
+    await persistApiFootballSoccerSync(options.persistenceStore, {
+      competitions,
+      fixtures,
+      snapshots,
+    });
+  }
+
   return {
     competitions,
     fixtures,
-    snapshots: [
-      buildApiFootballSnapshot(leaguesResponse, "leagues", null, input.now),
-      buildApiFootballSnapshot(fixturesResponse, "fixtures", null, input.now),
-    ],
+    snapshots,
   };
 }
