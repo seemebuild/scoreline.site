@@ -39,6 +39,7 @@ export default async function NewsArticlePage({ params }: { params: NewsPagePara
         <div className="mt-6 flex flex-wrap gap-3 text-sm text-[color:var(--muted)]">
           <span>{article.author?.name ?? "Scoreline Editorial"}</span>
           <span>{article.publishedAt ?? "Unpublished"}</span>
+          <span>{article.category?.name ?? "Editorial"}</span>
         </div>
         <div className="mt-8 space-y-4 text-lg leading-8">
           <p>{article.body}</p>

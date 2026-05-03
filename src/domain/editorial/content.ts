@@ -1,4 +1,4 @@
-import type { EditorialArticle, EditorialAuthorCard } from "./types";
+import type { EditorialArticle, EditorialAuthorCard, EditorialCategory } from "./types";
 
 type ContentClient = {
   fetch: <T>(query: string, params?: Record<string, string | number>) => Promise<T>;
@@ -14,6 +14,7 @@ const fallbackArticles: EditorialArticle[] = [
     status: "published",
     publishedAt: null,
     author: null,
+    category: null,
     sources: [],
   },
 ];
@@ -43,6 +44,7 @@ export async function getEditorialArticles(client?: ContentClient): Promise<Edit
       status,
       publishedAt,
       author->{_id, name, "slug": slug.current, bio},
+      category->{_id, name, "slug": slug.current, description},
       "sources": sources[]->{label, url}
     } | order(publishedAt desc, _createdAt desc)`,
   );
@@ -66,6 +68,7 @@ export async function getEditorialArticleBySlug(
       status,
       publishedAt,
       author->{_id, name, "slug": slug.current, bio},
+      category->{_id, name, "slug": slug.current, description},
       "sources": sources[]->{label, url}
     }`,
     { slug },
@@ -103,6 +106,49 @@ export async function getEditorialAuthorBySlug(
       "slug": slug.current,
       bio,
       "articleCount": count(*[_type == "article" && references(^._id)])
+    }`,
+    { slug },
+  );
+}
+
+export async function getEditorialCategories(client?: ContentClient): Promise<EditorialCategory[]> {
+  if (!client) {
+    return [
+      {
+        id: "launch-editorial-category",
+        name: "Editorial",
+        slug: "editorial",
+        description: "Scoreline editorial coverage and newsroom updates.",
+      },
+    ];
+  }
+
+  return client.fetch<EditorialCategory[]>(
+    `*[_type == "category"]{
+      _id,
+      name,
+      "slug": slug.current,
+      description
+    } | order(name asc)`,
+  );
+}
+
+export async function getEditorialCategoryBySlug(
+  slug: string,
+  client?: ContentClient,
+): Promise<EditorialCategory | null> {
+  if (!client) {
+    return (
+      (await getEditorialCategories()).find((category) => category.slug === slug) ?? null
+    );
+  }
+
+  return client.fetch<EditorialCategory | null>(
+    `*[_type == "category" && slug.current == $slug][0]{
+      _id,
+      name,
+      "slug": slug.current,
+      description
     }`,
     { slug },
   );
