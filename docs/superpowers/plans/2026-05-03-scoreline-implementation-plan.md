@@ -8,12 +8,13 @@ Last updated: 2026-05-03
 ## Current Status
 
 - Milestone 0 is complete and merged in PR #1: `feat: add Scoreline app baseline`.
-- Milestone 1 has started:
+- Milestone 1 is complete and merged:
   - Prisma now includes the first normalized sports and operations schema.
   - Sports route helpers cover canonical slugs, sport paths, competition paths, and event paths.
   - Event lifecycle helpers cover internal statuses, public status groups, and API-Football status mapping.
   - Launch seed catalog now covers target sports and must-have soccer competitions.
   - Initial Prisma migration SQL is generated.
+  - Neon migration, seed, and constraint verification now pass via `pnpm db:verify`.
 - Latest verified gates:
   - `pnpm lint`
   - `pnpm typecheck`
@@ -24,10 +25,11 @@ Last updated: 2026-05-03
 
 ## Immediate Next Slice
 
-Finish Milestone 1 in a small PR:
+Start Milestone 2 in a small PR:
 
-- Run the Prisma migration against a reachable Postgres database.
-- Add database-backed verification for duplicate provider mapping constraints if a local Postgres test database is available; otherwise document the manual migration verification step.
+- Add job handler execution logs for admin visibility.
+- Add job history or execution records if needed for ops debugging.
+- Keep the queue and scheduler flow thin, deterministic, and easy to audit.
 
 ## Planning Principles
 
@@ -72,7 +74,7 @@ Goal: create a reliable Next.js foundation before product work begins.
 
 ## Milestone 1: Domain Model And Database Foundation
 
-Status: In progress. Core schema and helper tests are present; seed data, migration workflow, and database constraint verification remain.
+Status: Complete. Neon migration, seed, and database verification now pass.
 
 Goal: establish the normalized sports and operations data model.
 
@@ -102,18 +104,17 @@ Goal: establish the normalized sports and operations data model.
 
 ### Test Gate
 
-- [ ] Prisma migration applies cleanly against Postgres. Migration SQL has been generated; local apply is blocked until a Postgres database is reachable.
+- [x] Prisma migration applies cleanly against Neon.
 - [x] Seed script creates required sports and soccer competitions.
 - [x] Unit tests cover URL builders, slug generation, event statuses, and enum mappings.
-- [ ] Database constraints prevent duplicate provider mappings where expected.
+- [x] Database constraints prevent duplicate provider mappings where expected.
 
 ### Suggested Commits
 
 - Completed in PR #1:
   - `feat: add Scoreline app baseline`
-- Remaining:
-  - `test: verify Prisma migration against Postgres`
-  - `test: cover seed data and provider constraints`
+  - `test: verify Prisma migration against Neon`
+  - `test: add database-backed provider constraint coverage`
 
 ## Milestone 2: Job Queue And Scheduler Foundation
 
