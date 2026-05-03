@@ -34,6 +34,7 @@ describe("enqueueJob", () => {
       },
       jobExecutionLog: {
         create: vi.fn(),
+        findMany: vi.fn(),
       },
       $queryRaw: vi.fn(),
     } satisfies JobStorePrismaClient;
@@ -58,6 +59,7 @@ describe("enqueueJob", () => {
       },
       jobExecutionLog: {
         create: vi.fn(),
+        findMany: vi.fn(),
       },
       $queryRaw: vi.fn(),
     } satisfies JobStorePrismaClient;
@@ -98,6 +100,7 @@ describe("claimDueJobs", () => {
       },
       jobExecutionLog: {
         create: vi.fn(),
+        findMany: vi.fn(),
       },
       $queryRaw: queryRaw,
     } satisfies JobStorePrismaClient;
@@ -127,6 +130,7 @@ describe("logJobExecution", () => {
       },
       jobExecutionLog: {
         create,
+        findMany: vi.fn(),
       },
       $queryRaw: vi.fn(),
     } satisfies JobStorePrismaClient;

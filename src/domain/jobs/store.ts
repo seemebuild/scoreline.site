@@ -35,6 +35,20 @@ export type JobStorePrismaClient = {
         attempts: number;
       };
     }) => Promise<unknown>;
+    findMany: (args: {
+      orderBy: { createdAt: "asc" | "desc" };
+      take: number;
+    }) => Promise<
+      Array<{
+        id: string;
+        jobId: string | null;
+        jobType: string;
+        status: string;
+        message: string | null;
+        attempts: number;
+        createdAt: Date;
+      }>
+    >;
   };
   $queryRaw: <TRow>(query: Prisma.Sql) => Promise<TRow>;
 };
@@ -194,5 +208,25 @@ export async function logJobExecution(
       message: input.message ?? null,
       attempts: input.attempts,
     },
+  });
+}
+
+export async function listJobExecutionLogs(
+  prisma: JobStorePrismaClient,
+  limit: number,
+): Promise<
+  Array<{
+    id: string;
+    jobId: string | null;
+    jobType: string;
+    status: string;
+    message: string | null;
+    attempts: number;
+    createdAt: Date;
+  }>
+> {
+  return prisma.jobExecutionLog.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
   });
 }

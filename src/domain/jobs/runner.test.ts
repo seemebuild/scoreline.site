@@ -38,6 +38,7 @@ function createPrisma(claimedJobs: Job[]): JobStorePrismaClient {
     },
     jobExecutionLog: {
       create: vi.fn().mockResolvedValue({ id: "log_1" }),
+      findMany: vi.fn(),
     },
     $queryRaw: vi.fn().mockResolvedValue(claimedJobs),
   };
