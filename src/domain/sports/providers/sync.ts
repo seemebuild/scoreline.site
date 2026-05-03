@@ -3,7 +3,8 @@ import { persistApiFootballSoccerSync } from "./persist";
 import type { ProviderSnapshot } from "./types";
 
 type ApiFootballClient = {
-  get: <TResponse = unknown>(endpoint: string, params?: Record<string, string | number | boolean | undefined>) => Promise<TResponse>;
+  getLeagues: <TResponse = unknown>(params?: Record<string, string | number | boolean | undefined>) => Promise<TResponse>;
+  getFixtures: <TResponse = unknown>(params?: Record<string, string | number | boolean | undefined>) => Promise<TResponse>;
 };
 
 type SyncApiFootballSoccerDataInput = {
@@ -25,8 +26,8 @@ export async function syncApiFootballSoccerData(
   input: SyncApiFootballSoccerDataInput,
   options: SyncApiFootballSoccerDataOptions = {},
 ): Promise<SyncApiFootballSoccerDataResult> {
-  const leaguesResponse = await client.get<{ response?: unknown[] }>("leagues");
-  const fixturesResponse = await client.get<{ response?: unknown[] }>("fixtures");
+  const leaguesResponse = await client.getLeagues<{ response?: unknown[] }>();
+  const fixturesResponse = await client.getFixtures<{ response?: unknown[] }>();
 
   const competitions = (leaguesResponse.response ?? []).map((item) =>
     mapApiFootballLeague(item as Parameters<typeof mapApiFootballLeague>[0], {

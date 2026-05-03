@@ -9,8 +9,7 @@ describe("syncApiFootballSoccerData", () => {
     const eventUpsert = vi.fn().mockResolvedValue({ id: "event_1" });
     const providerMappingUpsert = vi.fn().mockResolvedValue({ id: "mapping_1" });
     const client = {
-      get: vi.fn().mockImplementation(async (endpoint: string) => {
-        if (endpoint === "leagues") {
+      getLeagues: vi.fn().mockImplementation(async () => {
           return {
             response: [
               {
@@ -19,9 +18,8 @@ describe("syncApiFootballSoccerData", () => {
               },
             ],
           };
-        }
-
-        if (endpoint === "fixtures") {
+      }),
+      getFixtures: vi.fn().mockImplementation(async () => {
           return {
             response: [
               {
@@ -37,9 +35,6 @@ describe("syncApiFootballSoccerData", () => {
               },
             ],
           };
-        }
-
-        throw new Error(`Unexpected endpoint ${endpoint}`);
       }),
     };
     const persistenceStore = {
