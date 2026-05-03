@@ -11,6 +11,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/authors",
   },
+  openGraph: {
+    title: "Authors",
+    description: "Meet the Scoreline editorial team.",
+    url: "/authors",
+    type: "website",
+  },
 };
 
 export default async function AuthorsPage() {

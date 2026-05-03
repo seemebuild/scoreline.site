@@ -11,6 +11,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/news",
   },
+  openGraph: {
+    title: "News",
+    description: "Editorial coverage and sports reporting from Scoreline.",
+    url: "/news",
+    type: "website",
+  },
 };
 
 export default async function NewsPage() {
