@@ -6,6 +6,15 @@ export type JobsCronEnv = {
 };
 
 type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+type ScheduledHandler<TEnv> = (
+  event: unknown,
+  env: TEnv,
+  context: unknown,
+) => Promise<void>;
+
+export type JobsCronWorker<TEnv> = {
+  scheduled: ScheduledHandler<TEnv>;
+};
 
 export async function triggerJobsTick(
   env: JobsCronEnv,
@@ -22,8 +31,8 @@ export async function triggerJobsTick(
   });
 }
 
-const worker: ExportedHandler<JobsCronEnv> = {
-  async scheduled(_event, env): Promise<void> {
+const worker: JobsCronWorker<JobsCronEnv> = {
+  async scheduled(_event: unknown, env: JobsCronEnv): Promise<void> {
     const response = await triggerJobsTick(env);
 
     if (!response.ok) {
