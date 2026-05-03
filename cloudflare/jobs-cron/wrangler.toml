@@ -1,0 +1,14 @@
+name = "scoreline-jobs-cron"
+main = "src/worker.ts"
+compatibility_date = "2026-05-03"
+
+[triggers]
+crons = ["*/1 * * * *"]
+
+[vars]
+# Example value:
+# SCORELINE_BASE_URL = "https://scoreline.site"
+SCORELINE_BASE_URL = "https://scoreline.site"
+
+# Set JOB_RUNNER_SECRET with:
+# wrangler secret put JOB_RUNNER_SECRET
