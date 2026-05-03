@@ -1,0 +1,270 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EventStatus {
+  scheduled
+  live
+  halftime
+  final
+  postponed
+  cancelled
+}
+
+enum JobStatus {
+  pending
+  running
+  completed
+  failed
+}
+
+model AppSetting {
+  key       String   @id
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sport {
+  id           String        @id @default(cuid())
+  name         String
+  slug         String        @unique
+  competitions Competition[]
+  teams        Team[]
+  athletes     Athlete[]
+  events       Event[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Competition {
+  id        String   @id @default(cuid())
+  sportId   String
+  sport     Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  name      String
+  slug      String
+  region    String?
+  seasons   Season[]
+  events    Event[]
+  standings Standing[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([sportId, slug])
+  @@index([sportId])
+}
+
+model Season {
+  id            String      @id @default(cuid())
+  competitionId String
+  competition   Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  name          String
+  slug          String
+  startsOn      DateTime?
+  endsOn        DateTime?
+  events        Event[]
+  standings     Standing[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([competitionId, slug])
+  @@index([competitionId])
+}
+
+model Team {
+  id            String            @id @default(cuid())
+  sportId       String
+  sport         Sport             @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  name          String
+  slug          String
+  shortName     String?
+  countryCode   String?
+  homeEvents    Event[]           @relation("HomeTeam")
+  awayEvents    Event[]           @relation("AwayTeam")
+  standings     Standing[]
+  providerLinks ProviderMapping[]
+  athletes      Athlete[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@unique([sportId, slug])
+  @@index([sportId])
+}
+
+model Athlete {
+  id          String   @id @default(cuid())
+  sportId     String
+  sport       Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  teamId      String?
+  team        Team?    @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  name        String
+  slug        String
+  countryCode String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([sportId, slug])
+  @@index([teamId])
+}
+
+model Venue {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String
+  city      String?
+  country   String?
+  events    Event[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([slug, city, country])
+}
+
+model Event {
+  id             String       @id @default(cuid())
+  sportId        String
+  sport          Sport        @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  competitionId  String?
+  competition    Competition? @relation(fields: [competitionId], references: [id], onDelete: SetNull)
+  seasonId       String?
+  season         Season?      @relation(fields: [seasonId], references: [id], onDelete: SetNull)
+  venueId        String?
+  venue          Venue?       @relation(fields: [venueId], references: [id], onDelete: SetNull)
+  homeTeamId     String?
+  homeTeam       Team?        @relation("HomeTeam", fields: [homeTeamId], references: [id], onDelete: SetNull)
+  awayTeamId     String?
+  awayTeam       Team?        @relation("AwayTeam", fields: [awayTeamId], references: [id], onDelete: SetNull)
+  slug           String
+  kickoffAt      DateTime
+  status         EventStatus  @default(scheduled)
+  scores         Score[]
+  providerLinks  ProviderMapping[]
+  trendScores    TrendScore[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([sportId, slug])
+  @@index([competitionId, kickoffAt])
+  @@index([status, kickoffAt])
+  @@index([homeTeamId])
+  @@index([awayTeamId])
+}
+
+model Score {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  period    String   @default("full_time")
+  homeScore Int?
+  awayScore Int?
+  clock     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([eventId, period])
+}
+
+model Standing {
+  id            String      @id @default(cuid())
+  competitionId String
+  competition   Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  seasonId      String?
+  season        Season?     @relation(fields: [seasonId], references: [id], onDelete: SetNull)
+  teamId        String
+  team          Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  rank          Int
+  played        Int         @default(0)
+  won           Int         @default(0)
+  drawn         Int         @default(0)
+  lost          Int         @default(0)
+  points        Int         @default(0)
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([competitionId, seasonId, teamId])
+  @@index([competitionId, seasonId, rank])
+}
+
+model ProviderMapping {
+  id             String   @id @default(cuid())
+  provider       String
+  providerType   String
+  providerId     String
+  teamId         String?
+  team           Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  eventId        String?
+  event          Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([provider, providerType, providerId])
+  @@index([teamId])
+  @@index([eventId])
+}
+
+model ProviderSnapshot {
+  id           String   @id @default(cuid())
+  provider     String
+  endpoint     String
+  providerId   String?
+  responseJson Json
+  fetchedAt    DateTime @default(now())
+
+  @@index([provider, endpoint, fetchedAt])
+  @@index([providerId])
+}
+
+model Job {
+  id             String    @id @default(cuid())
+  type           String
+  status         JobStatus @default(pending)
+  payload        Json
+  idempotencyKey String?   @unique
+  attempts       Int       @default(0)
+  maxAttempts    Int       @default(3)
+  runAfter       DateTime  @default(now())
+  lockedAt       DateTime?
+  lastError      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([status, runAfter])
+  @@index([type, status])
+}
+
+model AnonymousEvent {
+  id        String   @id @default(cuid())
+  name      String
+  path      String?
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  @@index([name, createdAt])
+}
+
+model TrendScore {
+  id        String   @id @default(cuid())
+  eventId   String?
+  event     Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  scope     String
+  score     Float
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@index([scope, score])
+  @@index([eventId])
+}
+
+model FeedbackSubmission {
+  id        String   @id @default(cuid())
+  email     String?
+  subject   String
+  message   String
+  path      String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
