@@ -76,3 +76,12 @@ pnpm db:seed
 This baseline includes the Next.js App Router scaffold, TypeScript, linting,
 Vitest, Playwright, Prisma configuration, CI, environment validation, and the
 first Scoreline app shell.
+
+## Cloudflare Jobs Cron
+
+A minimal Cloudflare Worker cron caller lives at:
+
+- `cloudflare/jobs-cron/src/worker.ts`
+- `cloudflare/jobs-cron/wrangler.toml`
+
+It triggers `POST /api/jobs/tick` with the `x-job-runner-secret` header.
