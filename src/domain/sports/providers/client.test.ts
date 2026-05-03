@@ -76,4 +76,23 @@ describe("createApiFootballClient", () => {
     expect((fetch.mock.calls[0]?.[0] as URL).href).toContain("/leagues?season=2025");
     expect((fetch.mock.calls[1]?.[0] as URL).href).toContain("/fixtures?season=2025&league=39");
   });
+
+  it("exposes a named soccer helper for standings", async () => {
+    const fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ response: [] }),
+    });
+
+    const client = createApiFootballClient({
+      apiKey: "test-key",
+      baseUrl: "https://v3.football.api-sports.io",
+      fetch,
+    });
+
+    await client.getStandings({ season: 2025, league: 39 });
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect((fetch.mock.calls[0]?.[0] as URL).href).toContain("/standings?season=2025&league=39");
+  });
 });
