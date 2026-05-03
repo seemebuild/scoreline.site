@@ -4,6 +4,7 @@ import { syncApiFootballSoccerData } from "./sync";
 
 describe("syncApiFootballSoccerData", () => {
   it("maps competitions and fixtures from provider payloads", async () => {
+    const create = vi.fn().mockResolvedValue({ id: "snapshot_1" });
     const client = {
       get: vi.fn().mockImplementation(async (endpoint: string) => {
         if (endpoint === "leagues") {
@@ -38,13 +39,21 @@ describe("syncApiFootballSoccerData", () => {
         throw new Error(`Unexpected endpoint ${endpoint}`);
       }),
     };
+    const snapshotStore = {
+      providerSnapshot: {
+        create,
+      },
+    };
 
     const result = await syncApiFootballSoccerData(client, {
       now: new Date("2026-05-03T10:00:00.000Z"),
+    }, {
+      snapshotStore,
     });
 
     expect(result.competitions).toHaveLength(1);
     expect(result.fixtures).toHaveLength(1);
     expect(result.snapshots).toHaveLength(2);
+    expect(create).toHaveBeenCalledTimes(2);
   });
 });
