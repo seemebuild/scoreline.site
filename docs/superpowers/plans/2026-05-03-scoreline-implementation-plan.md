@@ -353,6 +353,8 @@ Goal: make editorial publishing the primary SEO workflow.
 
 ## Milestone 6: SEO, Structured Data, And AdSense Readiness
 
+Status: complete.
+
 Goal: make public pages search-friendly and policy-ready.
 
 ### Scope
