@@ -22,6 +22,12 @@ enum JobStatus {
   failed
 }
 
+enum AiDraftStatus {
+  review
+  approved
+  rejected
+}
+
 model AppSetting {
   key       String   @id
   value     String
@@ -249,6 +255,26 @@ model JobExecutionLog {
   @@index([jobId, createdAt])
   @@index([jobType, createdAt])
   @@index([status, createdAt])
+}
+
+model AiDraft {
+  id              String         @id @default(cuid())
+  title           String
+  summary         String
+  body            String
+  category        String
+  provider        String
+  providerVariant String
+  sourceUrls      Json
+  sourceRecordIds Json
+  status          AiDraftStatus  @default(review)
+  notes           String?
+  reviewedAt      DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([status, createdAt])
+  @@index([provider, providerVariant])
 }
 
 model AnonymousEvent {
