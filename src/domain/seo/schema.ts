@@ -56,3 +56,29 @@ export function buildArticleSchema(input: {
     },
   };
 }
+
+export function buildSportsEventSchema(input: {
+  name: string;
+  url: string;
+  startDate: string;
+  status: "live" | "halftime" | "scheduled" | "final" | "postponed" | "cancelled";
+  competitionName: string | null;
+  homeName: string | null;
+  awayName: string | null;
+  homeScore: number | null;
+  awayScore: number | null;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SportsEvent",
+    name: input.name,
+    url: input.url,
+    startDate: input.startDate,
+    eventStatus: input.status,
+    about: input.competitionName ? { "@type": "Thing", name: input.competitionName } : undefined,
+    homeTeam: input.homeName ? { "@type": "SportsTeam", name: input.homeName } : undefined,
+    awayTeam: input.awayName ? { "@type": "SportsTeam", name: input.awayName } : undefined,
+    homeScore: input.homeScore ?? undefined,
+    awayScore: input.awayScore ?? undefined,
+  };
+}

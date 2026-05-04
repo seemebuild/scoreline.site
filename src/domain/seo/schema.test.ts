@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildArticleSchema, buildBreadcrumbSchema, buildOrganizationSchema, buildWebSiteSchema } from "./schema";
+import { buildArticleSchema, buildBreadcrumbSchema, buildOrganizationSchema, buildSportsEventSchema, buildWebSiteSchema } from "./schema";
 
 describe("SEO schema builders", () => {
   it("builds organization and website schema", () => {
@@ -28,5 +28,22 @@ describe("SEO schema builders", () => {
 
     expect(schema["@type"]).toBe("Article");
     expect(schema.headline).toBe("Hello");
+  });
+
+  it("builds sports event schema", () => {
+    const schema = buildSportsEventSchema({
+      name: "Manchester United vs Chelsea",
+      url: "https://scoreline.site/scores",
+      startDate: "2026-05-03T00:00:00.000Z",
+      status: "live",
+      competitionName: "Premier League",
+      homeName: "Manchester United",
+      awayName: "Chelsea",
+      homeScore: 2,
+      awayScore: 1,
+    });
+
+    expect(schema["@type"]).toBe("SportsEvent");
+    expect(schema.name).toBe("Manchester United vs Chelsea");
   });
 });
