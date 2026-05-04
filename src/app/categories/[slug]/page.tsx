@@ -4,18 +4,18 @@ import { notFound } from "next/navigation";
 import { SiteShell } from "../../components/site-shell";
 import { createSanityClient } from "../../../domain/editorial/client";
 import { getEditorialCategoryBySlug } from "../../../domain/editorial/content";
+import { buildPageMetadata } from "../../../domain/seo/metadata";
 
 type CategoryPageParams = {
   slug: string;
 };
 
 export function generateMetadata({ params }: { params: CategoryPageParams }): Metadata {
-  return {
+  return buildPageMetadata({
     title: "Category",
-    alternates: {
-      canonical: `/categories/${params.slug}`,
-    },
-  };
+    description: "Editorial category page.",
+    canonicalPath: `/categories/${params.slug}`,
+  });
 }
 
 export default async function CategoryPage({ params }: { params: CategoryPageParams }) {

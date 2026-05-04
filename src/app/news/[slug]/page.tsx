@@ -5,6 +5,7 @@ import { SiteShell } from "../../components/site-shell";
 import { createSanityClient } from "../../../domain/editorial/client";
 import { getEditorialArticleBySlug } from "../../../domain/editorial/content";
 import { buildArticleSchema, buildBreadcrumbSchema } from "../../../domain/seo/schema";
+import { buildPageMetadata } from "../../../domain/seo/metadata";
 
 type NewsPageParams = {
   slug: string;
@@ -15,13 +16,11 @@ export function generateMetadata({ params }: { params: NewsPageParams }): Metada
     return {};
   }
 
-  return {
+  return buildPageMetadata({
     title: "Scoreline editorial coverage is coming online",
     description: "A public editorial shell is now in place while the Sanity workflow is wired up behind it.",
-    alternates: {
-      canonical: `/news/${params.slug}`,
-    },
-  };
+    canonicalPath: `/news/${params.slug}`,
+  });
 }
 
 export default async function NewsArticlePage({ params }: { params: NewsPageParams }) {

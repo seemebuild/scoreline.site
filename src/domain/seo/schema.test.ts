@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildArticleSchema, buildBreadcrumbSchema, buildOrganizationSchema, buildSportsEventSchema, buildWebSiteSchema } from "./schema";
+import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema, buildOrganizationSchema, buildSportsEventSchema, buildWebSiteSchema } from "./schema";
 
 describe("SEO schema builders", () => {
   it("builds organization and website schema", () => {
@@ -45,5 +45,12 @@ describe("SEO schema builders", () => {
 
     expect(schema["@type"]).toBe("SportsEvent");
     expect(schema.name).toBe("Manchester United vs Chelsea");
+  });
+
+  it("builds faq schema", () => {
+    const schema = buildFaqSchema([{ question: "What is Scoreline?", answer: "A sports desk." }]);
+
+    expect(schema["@type"]).toBe("FAQPage");
+    expect(schema.mainEntity).toHaveLength(1);
   });
 });

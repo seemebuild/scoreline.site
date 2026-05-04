@@ -3,14 +3,14 @@ import Link from "next/link";
 
 import { SiteShell } from "../components/site-shell";
 import { getSeedDrafts } from "../../../sanity/seedDrafts";
+import { buildPageMetadata } from "../../domain/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Studio",
   description: "Scoreline Sanity studio entry and starter drafts.",
-  alternates: {
-    canonical: "/studio",
-  },
-};
+  canonicalPath: "/studio",
+  noindex: true,
+});
 
 export default function StudioPage() {
   const drafts = getSeedDrafts();
