@@ -23,6 +23,14 @@ Last updated: 2026-05-03
   - API-Football soccer client helpers cover leagues, fixtures, standings, and results.
   - Soccer sync now persists competitions, fixtures, standings, results, and provider snapshots to Neon.
   - Capability-aware job planning is available for launch sports.
+- Milestone 6 is complete and merged:
+  - Shared metadata builders and canonical URL helpers are in place.
+  - Structured data covers sports, editorial, and trust surfaces.
+  - Sitemap and robots coverage now match the public route set.
+  - Thin pages are marked noindex where needed.
+- Milestone 7 is now the active workstream:
+  - AI draft provider contract and validation layer are in place.
+  - The first implementation slice will focus on queued draft generation from stored editorial sources.
 - Latest verified gates:
   - `pnpm lint`
   - `pnpm typecheck`
@@ -33,11 +41,12 @@ Last updated: 2026-05-03
 
 ## Immediate Next Slice
 
-Start Milestone 4 in a small PR:
+Start Milestone 7 with the draft queue boundary first:
 
-- Build the public sports navigation and the first crawlable sports surface.
-- Keep the public score surfaces backed by the normalized provider data model.
-- Use the provider capability matrix to avoid surfacing empty sport features.
+- Add the AI draft persistence model for review-only output.
+- Wire the job runner to turn stored editorial sources into draft candidates.
+- Keep the AI provider behind the existing domain contract and validation layer.
+- Add tests that pin prompt construction, output validation, and draft persistence.
 
 ## Planning Principles
 
@@ -402,6 +411,8 @@ Goal: make public pages search-friendly and policy-ready.
 
 ## Milestone 7: AI Draft Generation Workflow
 
+Status: in progress.
+
 Goal: generate safe, source-grounded drafts for human approval.
 
 ### Scope
@@ -409,16 +420,16 @@ Goal: generate safe, source-grounded drafts for human approval.
 - Add AI provider adapter contract.
 - Implement Gemini provider adapter.
 - Add prompt templates for previews, recaps, explainers, and update summaries.
-- Require source URLs or structured source records for every draft.
+- Require stored editorial source records for every draft.
 - Add validation layer for:
   - required sources
   - no unsupported claims
   - required headline/summary/body/category fields
   - no betting language
   - no publisher rewrite mode
-- Add scheduled draft candidate jobs.
-- Add manual draft trigger endpoint for admin use.
-- Create unpublished Sanity drafts only.
+- Add queued draft candidate jobs.
+- Add draft review queue storage for generated output.
+- Add a minimal studio-facing draft review surface.
 - Add conservative daily draft cap: 5-10 drafts/day.
 
 ### Test Gate
