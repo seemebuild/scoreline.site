@@ -15,6 +15,22 @@ Last updated: 2026-05-03
   - Launch seed catalog now covers target sports and must-have soccer competitions.
   - Initial Prisma migration SQL is generated.
   - Neon migration, seed, and constraint verification now pass via `pnpm db:verify`.
+- Milestone 2 is complete and merged:
+  - Job queue claiming, retries, typed handlers, execution logs, and admin log inspection are in place.
+  - Protected tick endpoint and Cloudflare Worker Cron caller are wired up.
+- Milestone 3 is complete and merged:
+  - Provider contract types and registry are in place.
+  - API-Football soccer client helpers cover leagues, fixtures, standings, and results.
+  - Soccer sync now persists competitions, fixtures, standings, results, and provider snapshots to Neon.
+  - Capability-aware job planning is available for launch sports.
+- Milestone 6 is complete and merged:
+  - Shared metadata builders and canonical URL helpers are in place.
+  - Structured data covers sports, editorial, and trust surfaces.
+  - Sitemap and robots coverage now match the public route set.
+  - Thin pages are marked noindex where needed.
+- Milestone 7 is now the active workstream:
+  - AI draft provider contract and validation layer are in place.
+  - The first implementation slice will focus on queued draft generation from stored editorial sources.
 - Latest verified gates:
   - `pnpm lint`
   - `pnpm typecheck`
@@ -25,11 +41,12 @@ Last updated: 2026-05-03
 
 ## Immediate Next Slice
 
-Start Milestone 2 in a small PR:
+Start Milestone 7 with the draft queue boundary first:
 
-- Add job handler execution logs for admin visibility.
-- Add job history or execution records if needed for ops debugging.
-- Keep the queue and scheduler flow thin, deterministic, and easy to audit.
+- Add the AI draft persistence model for review-only output.
+- Wire the job runner to turn stored editorial sources into draft candidates.
+- Keep the AI provider behind the existing domain contract and validation layer.
+- Add tests that pin prompt construction, output validation, and draft persistence.
 
 ## Planning Principles
 
@@ -154,33 +171,121 @@ Goal: integrate API-SPORTS/API-Football behind stable internal interfaces.
 
 ### Scope
 
-- Define provider adapter contracts.
-- Implement HTTP client with retries, timeout, logging, and rate-limit awareness.
-- Store raw provider snapshots.
-- Implement API-Football soccer adapter for competitions, teams, fixtures, live scores, results, and standings.
-- Implement adapters or adapter shells for NBA, American football, baseball, MMA, tennis, and golf using API-SPORTS endpoints where available.
-- Normalize provider responses into internal models.
-- Add provider fixture files for tests.
-- Add provider sync jobs:
-  - fixture sync
-  - live score sync
-  - result finalization
-  - standings sync
+- [x] Define provider adapter contracts.
+- [x] Implement HTTP client with retries, timeout, logging, and rate-limit awareness.
+- [x] Store raw provider snapshots.
+- [x] Implement API-Football soccer adapter for competitions, teams, fixtures, live scores, results, and standings.
+- [x] Implement adapters or adapter shells for NBA, American football, baseball, MMA, tennis, and golf using API-SPORTS endpoints where available.
+- [x] Normalize provider responses into internal models.
+- [x] Add provider fixture files for tests.
+- [x] Add provider sync jobs:
+  - [x] fixture sync
+  - [x] live score sync
+  - [x] result finalization
+  - [x] standings sync
+- [x] Add provider capability matrix and capability-aware job planning.
 
 ### Test Gate
 
-- Adapter unit tests map recorded provider payloads into normalized models.
-- Integration tests run sync jobs against mocked provider responses.
-- Sync jobs are idempotent.
-- Provider snapshots are stored with enough metadata for debugging.
-- Missing provider fields degrade gracefully instead of crashing public pages.
+- [x] Adapter unit tests map recorded provider payloads into normalized models.
+- [x] Integration tests run sync jobs against mocked provider responses.
+- [x] Sync jobs are idempotent.
+- [x] Provider snapshots are stored with enough metadata for debugging.
+- [x] Missing provider fields degrade gracefully instead of crashing public pages.
+- [x] Capability-aware job planning filters unsupported work by sport.
 
 ### Suggested Commits
 
-- `feat: add sports provider adapter contracts`
-- `feat: integrate API-Football soccer sync`
-- `feat: add multi-sport provider adapters`
-- `test: cover provider normalization`
+- Completed in sequential PRs:
+  - `feat: add sports provider adapter contracts`
+  - `feat: add api-football client and sync stub`
+  - `feat: persist provider snapshots`
+  - `feat: persist soccer sync data`
+  - `feat: add provider shells for launch sports`
+  - `feat: add provider registry dispatcher`
+  - `feat: add named soccer provider helpers`
+  - `feat: add soccer standings sync`
+  - `feat: add soccer results sync`
+  - `feat: add provider capability matrix`
+  - `feat: add soccer sync job plan`
+
+## Milestone 4: Public Score And Sports Pages
+
+Status: complete.
+
+Goal: ship crawlable score surfaces backed by normalized data.
+
+### Scope
+
+- Global app layout, navigation, and footer are in place.
+- Homepage skeleton renders the launch sports and featured competition modules.
+- Sport landing pages are in place.
+- Live scores page is in place.
+- Fixtures/results pages are in place.
+- Competition pages are in place.
+- Event detail pages are deferred to a later slice.
+- Standings pages exist where data exists.
+- Team pages for major teams are in place.
+- `.ics` calendar export is deferred to a later slice.
+- Empty/loading/error states are partially in place and can be expanded later.
+- Local favorites for sports, teams, and competitions are deferred to a later slice.
+
+### Test Gate
+
+- Playwright covers homepage and the public sports shell routes.
+- Unit tests cover public sports data helpers.
+- Pages render useful fallback content when data is missing.
+- Core pages include canonical URLs and basic metadata.
+
+### Suggested Commits
+
+- `feat: add public sports navigation`
+- `feat: add live scores, fixtures, and results pages`
+- `feat: add event and competition pages`
+- `feat: add local favorites and timezone preferences`
+- `test: add public sports smoke tests`
+
+## Milestone 5: Sanity Editorial System
+
+Status: complete.
+
+Goal: make editorial publishing the primary SEO workflow.
+
+### Scope
+
+- Configure Sanity project/schema.
+- Add schemas for:
+  - articles
+  - authors
+  - categories
+  - source references
+  - editorial policy pages
+  - AI draft state
+  - homepage pins
+  - manual trend boosts
+  - image metadata
+- Add Sanity client and typed content queries.
+- Public trust pages and editorial shell routes are in place.
+- Build article index/listing pages.
+- Build article detail pages.
+- Build author pages.
+- Build trust/policy page rendering.
+- Add Sanity publish webhook for revalidation.
+- Add editorial seed content drafts for required policy pages.
+
+### Test Gate
+
+- Schema validation tests cover required article fields.
+- Article page Playwright test renders title, author, date, body, and source links when present.
+- Sanity webhook route verifies secret and triggers targeted revalidation.
+- Policy pages are routable and crawlable.
+
+### Suggested Commits
+
+- `feat: add Sanity editorial schemas`
+- `feat: render articles and authors`
+- `feat: add Sanity revalidation webhook`
+- `test: cover editorial rendering`
 
 ## Milestone 4: Public Score And Sports Pages
 
@@ -257,6 +362,8 @@ Goal: make editorial publishing the primary SEO workflow.
 
 ## Milestone 6: SEO, Structured Data, And AdSense Readiness
 
+Status: complete.
+
 Goal: make public pages search-friendly and policy-ready.
 
 ### Scope
@@ -304,6 +411,8 @@ Goal: make public pages search-friendly and policy-ready.
 
 ## Milestone 7: AI Draft Generation Workflow
 
+Status: in progress.
+
 Goal: generate safe, source-grounded drafts for human approval.
 
 ### Scope
@@ -311,16 +420,16 @@ Goal: generate safe, source-grounded drafts for human approval.
 - Add AI provider adapter contract.
 - Implement Gemini provider adapter.
 - Add prompt templates for previews, recaps, explainers, and update summaries.
-- Require source URLs or structured source records for every draft.
+- Require stored editorial source records for every draft.
 - Add validation layer for:
   - required sources
   - no unsupported claims
   - required headline/summary/body/category fields
   - no betting language
   - no publisher rewrite mode
-- Add scheduled draft candidate jobs.
-- Add manual draft trigger endpoint for admin use.
-- Create unpublished Sanity drafts only.
+- Add queued draft candidate jobs.
+- Add draft review queue storage for generated output.
+- Add a minimal studio-facing draft review surface.
 - Add conservative daily draft cap: 5-10 drafts/day.
 
 ### Test Gate

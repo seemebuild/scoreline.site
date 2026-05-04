@@ -25,10 +25,13 @@
   "dependencies": {
     "@prisma/adapter-neon": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@sanity/client": "^7.22.0",
     "clsx": "^2.1.1",
+    "groq": "^5.23.0",
     "next": "^16.2.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "sanity": "^5.23.0",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.4.2"
   },

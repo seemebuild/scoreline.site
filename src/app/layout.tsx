@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
+import { buildOrganizationSchema, buildWebSiteSchema } from "../domain/seo/schema";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://scoreline.site"),
@@ -19,7 +20,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(buildOrganizationSchema()),
+          }}
+          type="application/ld+json"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(buildWebSiteSchema()),
+          }}
+          type="application/ld+json"
+        />
+      </body>
     </html>
   );
 }
