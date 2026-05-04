@@ -5,18 +5,18 @@ import { SiteShell } from "../../components/site-shell";
 import { createSanityClient } from "../../../domain/editorial/client";
 import { getEditorialAuthorBySlug, getEditorialArticles } from "../../../domain/editorial/content";
 import { buildBreadcrumbSchema } from "../../../domain/seo/schema";
+import { buildPageMetadata } from "../../../domain/seo/metadata";
 
 type AuthorPageParams = {
   slug: string;
 };
 
 export function generateMetadata({ params }: { params: AuthorPageParams }): Metadata {
-  return {
+  return buildPageMetadata({
     title: "Author",
-    alternates: {
-      canonical: `/authors/${params.slug}`,
-    },
-  };
+    description: "Scoreline editorial author page.",
+    canonicalPath: `/authors/${params.slug}`,
+  });
 }
 
 export default async function AuthorPage({ params }: { params: AuthorPageParams }) {
